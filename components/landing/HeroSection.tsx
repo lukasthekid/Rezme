@@ -21,7 +21,7 @@ export function HeroSection() {
       </div>
       {/* Frosted glass overlay - diffuses Spline for better text readability */}
       <div 
-        className="absolute inset-0 z-[0.5] pointer-events-none backdrop-blur-3xl"
+        className="absolute inset-0 z-[0.5] pointer-events-none backdrop-blur-2xl"
         aria-hidden
       />
       {/* Background Gradients */}
