@@ -4,9 +4,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import SplineWrapper from "./SplineWrapper";
+import { BrowserFrame } from "./BrowserFrame";
 
-// Placeholder Spline scene - replace with your own exported scene URL
-const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
 // Full-width flowing ribbon background
 const SPLINE_BACKGROUND_URL = "https://prod.spline.design/tcvbvwJIqt7pvN68/scene.splinecode";
 
@@ -87,21 +86,14 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right Column: Spline 3D Scene */}
-        <div className="relative h-[600px] w-full hidden lg:block">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full h-full"
-          >
-             <SplineWrapper 
-               scene={SPLINE_SCENE_URL} 
-               className="w-full h-full"
-               fallbackImage="/screenshots/dashboard.webp"
-               fallbackAlt="Resumr Dashboard"
-             />
-          </motion.div>
+        {/* Right Column: Web app screenshot in browser frame */}
+        <div className="relative h-[600px] w-full hidden lg:block z-10">
+          <BrowserFrame
+            image="/screenshots/dashboard.webp"
+            alt="Resumr Dashboard"
+            className="w-full h-full flex items-center justify-center"
+            interactive
+          />
         </div>
       </div>
 
