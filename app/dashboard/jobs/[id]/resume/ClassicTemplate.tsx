@@ -10,7 +10,7 @@ import {
 import { useResumeStore } from '@/store';
 
 /**
- * ClassicTemplate - A professional single-column resume layout
+ * ClassicTemplate (Tech Template) - A professional single-column resume layout
  * 
  * Layout:
  * - Single-column format with vertical flow

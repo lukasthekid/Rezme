@@ -6,6 +6,7 @@ import Link from "next/link";
 import { A4Page } from "@/components/resume";
 import { ModernTemplate } from "./ModernTemplate";
 import { ClassicTemplate } from "./ClassicTemplate";
+import { DACHTemplate } from "./DACHTemplate";
 import { useResumeStore } from "@/store";
 import type { ResumeData } from "@/types/resume";
 
@@ -122,7 +123,7 @@ export default function ResumeViewerPage() {
 
   const [loading, setLoading] = useState(true);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
-  const [layout, setLayout] = useState<"modern" | "classic">("modern");
+  const [layout, setLayout] = useState<"modern" | "classic" | "dach">("modern");
 
   // Get store actions
   const setResumeData = useResumeStore((state) => state.setResumeData);
@@ -237,11 +238,12 @@ export default function ResumeViewerPage() {
                 <label className="text-xs text-slate-600 font-medium">Layout:</label>
                 <select
                   value={layout}
-                  onChange={(e) => setLayout(e.target.value as "modern" | "classic")}
+                  onChange={(e) => setLayout(e.target.value as "modern" | "classic" | "dach")}
                   className="text-xs border border-slate-300 rounded-md px-3 py-1.5 bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 >
-                  <option value="modern">Modern</option>
-                  <option value="classic">Classic</option>
+                  <option value="modern">Two Column</option>
+                  <option value="classic">Tech</option>
+                  <option value="dach">DACH</option>
                 </select>
               </div>
 
@@ -326,7 +328,13 @@ export default function ResumeViewerPage() {
           {/* A4 Resume Document with Selected Template */}
           <div className="overflow-x-auto -mx-4 sm:mx-0 print:mx-0">
           <A4Page>
-            {layout === "modern" ? <ModernTemplate /> : <ClassicTemplate />}
+            {layout === "modern" ? (
+              <ModernTemplate />
+            ) : layout === "dach" ? (
+              <DACHTemplate />
+            ) : (
+              <ClassicTemplate />
+            )}
           </A4Page>
           </div>
 

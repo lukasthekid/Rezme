@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 import type { ResumeData } from "@/types/resume";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
 type RequestBody = {
   resumeData: ResumeData;
-  layout?: "modern" | "classic";
+  layout?: "modern" | "classic" | "dach";
 };
 
 function generateModernResumeHTML(resumeData: ResumeData): string {
@@ -835,6 +837,263 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
   `;
 }
 
+const DACH_PURPLE = "#7c3aed";
+const DACH_EXCLUDE_SKILLS = ["spokenLanguages", "hobbies"];
+
+function generateDACHResumeHTML(
+  resumeData: ResumeData,
+  headshotBase64?: string | null
+): string {
+  const { personal, education, workExperience, projects, skills } = resumeData;
+
+  const formatUrl = (url: string): string => {
+    if (!url) return "";
+    return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+  };
+
+  const currentRole = workExperience?.[0]?.title || "";
+  const mainSkills = skills
+    ? Object.entries(skills).filter(
+        ([cat]) => !DACH_EXCLUDE_SKILLS.includes(cat) && skills[cat]?.length
+      )
+    : [];
+  const spokenLanguages = skills?.spokenLanguages || [];
+  const hobbies = skills?.hobbies || [];
+
+  const headshotImg = headshotBase64
+    ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" class="dach-headshot-img" />`
+    : "";
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          @page { size: A4; margin: 0; }
+          body {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0;
+            padding: 8mm 10mm;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9pt;
+            line-height: 1.3;
+            color: #111827;
+            background: white;
+          }
+          .dach-header { display: flex; align-items: center; gap: 1.2em; margin-bottom: 1em; }
+          .dach-headshot-wrap { position: relative; flex-shrink: 0; }
+          .dach-headshot-shape {
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            width: 92px;
+            height: 92px;
+            background: ${DACH_PURPLE};
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 0);
+          }
+          .dach-headshot-box {
+            position: relative;
+            margin-left: 10px;
+            margin-top: 10px;
+            width: 72px;
+            height: 72px;
+            overflow: hidden;
+            border: 2px solid white;
+            border-radius: 2px;
+            background: #e2e8f0;
+          }
+          .dach-headshot-img { width: 100%; height: 100%; object-fit: cover; }
+          .dach-header-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 84px;
+          }
+          .dach-header-text-inner { text-align: left; }
+          .dach-role { font-size: 7pt; color: #64748b; margin-bottom: 0.2em; }
+          .dach-name { font-size: 14pt; font-weight: 700; color: #111827; margin-bottom: 0.4em; }
+          .dach-contact { font-size: 7pt; color: #374151; display: flex; flex-direction: column; gap: 0.2em; }
+          .dach-contact span { display: flex; align-items: center; gap: 0.4em; }
+          .dach-contact .dach-icon { width: 10px; height: 10px; flex-shrink: 0; display: inline-block; vertical-align: middle; }
+          .dach-contact .dach-icon svg { width: 100%; height: 100%; stroke: ${DACH_PURPLE}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+          .dach-grid { display: grid; grid-template-columns: 65% 35%; gap: 1em; }
+          .dach-main { padding-right: 0.5em; }
+          .dach-sidebar { padding-left: 0.3em; }
+          .dach-h2 {
+            font-size: 7pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 2px solid ${DACH_PURPLE};
+            padding-bottom: 0.15em;
+            margin-bottom: 0.6em;
+            color: #111827;
+          }
+          .dach-exp-row { display: flex; gap: 0.6em; margin-bottom: 0.7em; }
+          .dach-exp-dates { width: 4.5em; flex-shrink: 0; font-size: 7pt; color: #64748b; }
+          .dach-exp-content { flex: 1; min-width: 0; }
+          .dach-exp-title { font-weight: 700; font-size: 9pt; color: #111827; }
+          .dach-exp-company { font-size: 8pt; color: #64748b; }
+          .dach-exp-ul { margin-top: 0.3em; padding-left: 1em; list-style-type: disc; }
+          .dach-exp-ul li { margin-bottom: 0.15em; font-size: 8pt; color: #374151; line-height: 1.35; }
+          .dach-edu-row { display: flex; gap: 0.6em; margin-bottom: 0.7em; }
+          .dach-edu-dates { width: 4.5em; flex-shrink: 0; font-size: 7pt; color: #64748b; }
+          .dach-edu-content { flex: 1; min-width: 0; }
+          .dach-edu-inst { font-weight: 700; font-size: 9pt; color: #111827; }
+          .dach-edu-degree { font-size: 8pt; font-style: italic; color: #374151; }
+          .dach-edu-ul { margin-top: 0.3em; padding-left: 1em; list-style-type: disc; }
+          .dach-edu-ul li { margin-bottom: 0.15em; font-size: 8pt; color: #374151; }
+          .dach-project { margin-bottom: 0.6em; }
+          .dach-project-name { font-weight: 600; font-size: 9pt; color: #111827; }
+          .dach-project-role { font-size: 8pt; font-style: italic; color: #64748b; }
+          .dach-project-url { font-size: 7pt; color: #2563eb; margin-top: 0.15em; }
+          .dach-project-ul { margin-top: 0.25em; padding-left: 1em; list-style-type: disc; }
+          .dach-project-ul li { margin-bottom: 0.1em; font-size: 8pt; color: #374151; }
+          .dach-skill-ul { list-style: none; padding: 0; margin: 0; }
+          .dach-skill-ul li {
+            display: flex;
+            align-items: center;
+            gap: 0.4em;
+            margin-bottom: 0.25em;
+            font-size: 8pt;
+            color: #374151;
+          }
+          .dach-skill-ul li::before {
+            content: "";
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: ${DACH_PURPLE};
+            flex-shrink: 0;
+          }
+          section { margin-bottom: 1em; }
+          strong, b { font-weight: 600; }
+          em, i { font-style: italic; }
+          u { text-decoration: underline; }
+        </style>
+      </head>
+      <body>
+        <header class="dach-header">
+          <div class="dach-headshot-wrap">
+            <div class="dach-headshot-shape" aria-hidden="true"></div>
+            <div class="dach-headshot-box">
+              ${headshotImg || '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#94a3b8;">Foto</div>'}
+            </div>
+          </div>
+          <div class="dach-header-text">
+            <div class="dach-header-text-inner">
+            ${currentRole ? `<div class="dach-role">${currentRole}</div>` : ""}
+            <h1 class="dach-name">${personal?.name || "YOUR NAME"}</h1>
+            <div class="dach-contact">
+              ${personal?.phone ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span> ${personal.phone}</span>` : ""}
+              ${personal?.email ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span> ${personal.email}</span>` : ""}
+              ${personal?.location ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span> ${personal.location}</span>` : ""}
+            </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="dach-grid">
+          <div class="dach-main">
+            ${workExperience && workExperience.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Berufserfahrung</h2>
+                ${workExperience.map((exp) => `
+                  <div class="dach-exp-row">
+                    <div class="dach-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
+                    <div class="dach-exp-content">
+                      <div class="dach-exp-title">${exp.title || ""}</div>
+                      <div class="dach-exp-company">${exp.company || ""}</div>
+                      ${exp.achievements && exp.achievements.length > 0 ? `
+                        <ul class="dach-exp-ul">
+                          ${exp.achievements.map((a) => `<li>${a}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
+
+            ${education && education.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Ausbildung</h2>
+                ${education.map((edu) => `
+                  <div class="dach-edu-row">
+                    <div class="dach-edu-dates">${edu.startDate || ""} – ${edu.endDate || ""}</div>
+                    <div class="dach-edu-content">
+                      <div class="dach-edu-inst">${edu.institution || ""}</div>
+                      ${edu.degree ? `<div class="dach-edu-degree">${edu.degree}</div>` : ""}
+                      ${edu.highlights && edu.highlights.length > 0 ? `
+                        <ul class="dach-edu-ul">
+                          ${edu.highlights.map((h) => `<li>${h}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
+
+            ${projects && projects.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Projekte</h2>
+                ${projects.map((p) => `
+                  <div class="dach-project">
+                    <div class="dach-project-name">${p.name || ""}</div>
+                    ${p.role ? `<div class="dach-project-role">${p.role}</div>` : ""}
+                    ${p.url ? `<div class="dach-project-url">${formatUrl(p.url)}</div>` : ""}
+                    ${p.description && p.description.length > 0 ? `
+                      <ul class="dach-project-ul">
+                        ${p.description.map((d) => `<li>${d}</li>`).join("")}
+                      </ul>
+                    ` : ""}
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
+          </div>
+
+          <aside class="dach-sidebar">
+            ${mainSkills.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Kenntnisse</h2>
+                <ul class="dach-skill-ul">
+                  ${mainSkills.flatMap(([, items]) => (items || []).map((item) => `<li>${item}</li>`)).join("")}
+                </ul>
+              </section>
+            ` : ""}
+
+            ${spokenLanguages.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Sprachen</h2>
+                <ul class="dach-skill-ul">
+                  ${spokenLanguages.map((l) => `<li>${l}</li>`).join("")}
+                </ul>
+              </section>
+            ` : ""}
+
+            ${hobbies.length > 0 ? `
+              <section>
+                <h2 class="dach-h2">Hobbys & Interessen</h2>
+                <ul class="dach-skill-ul">
+                  ${hobbies.map((h) => `<li>${h}</li>`).join("")}
+                </ul>
+              </section>
+            ` : ""}
+          </aside>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body: RequestBody = await req.json();
@@ -847,10 +1106,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const html =
-      layout === "classic"
-        ? generateClassicResumeHTML(resumeData)
-        : generateModernResumeHTML(resumeData);
+    let html: string;
+    if (layout === "dach") {
+      let headshotBase64: string | null = null;
+      const session = await auth();
+      const userId = (session?.user as { id?: string } | undefined)?.id;
+      if (userId && typeof userId === "string") {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { headshot: true },
+        });
+        if (user?.headshot && user.headshot.length > 0) {
+          headshotBase64 = Buffer.from(user.headshot).toString("base64");
+        }
+      }
+      html = generateDACHResumeHTML(resumeData, headshotBase64);
+    } else if (layout === "classic") {
+      html = generateClassicResumeHTML(resumeData);
+    } else {
+      html = generateModernResumeHTML(resumeData);
+    }
 
     // Launch Puppeteer with appropriate settings
     const browser = await puppeteer.launch({

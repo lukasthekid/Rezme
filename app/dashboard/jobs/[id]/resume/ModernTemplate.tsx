@@ -12,7 +12,7 @@ import { useResumeStore } from '@/store';
 import { LinkIcon } from 'lucide-react';
 
 /**
- * ModernTemplate - A professional 2-column resume layout
+ * ModernTemplate (Two Column Template) - A professional 2-column resume layout
  * 
  * Layout:
  * - Left column (30%): Contact info, Skills, Education
