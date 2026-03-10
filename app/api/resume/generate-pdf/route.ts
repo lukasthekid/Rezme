@@ -461,7 +461,6 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
             margin-bottom: 1.5em;
             text-align: center;
           }
-          
           .header h1 {
             font-size: 20pt;
             font-weight: 700;
@@ -848,10 +847,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate the complete HTML based on layout
-    const html = layout === "classic" 
-      ? generateClassicResumeHTML(resumeData)
-      : generateModernResumeHTML(resumeData);
+    const html =
+      layout === "classic"
+        ? generateClassicResumeHTML(resumeData)
+        : generateModernResumeHTML(resumeData);
 
     // Launch Puppeteer with appropriate settings
     const browser = await puppeteer.launch({

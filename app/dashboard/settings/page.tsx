@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { DragDropUpload } from "./_components/DragDropUpload";
+import { HeadshotUpload } from "./_components/HeadshotUpload";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 const profileSchema = z.object({
@@ -172,6 +173,8 @@ export default async function SettingsPage({
                 Signed in as {user?.email ?? "unknown"}
               </p>
             </div>
+
+            <HeadshotUpload userName={user?.name} />
 
             <form action={updateProfile} className="space-y-5">
               {/* Full Name - Full Width */}

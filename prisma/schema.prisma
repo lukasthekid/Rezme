@@ -12,7 +12,8 @@ model User {
   name          String
   email         String    @unique
   emailVerified Boolean   @default(false)
-  image         String?
+  image         String? // OAuth profile URLs (Better Auth); not used for resumes
+  headshot      Bytes?  @db.ByteA // User-uploaded resume photo (cropped 1:1, compressed)
   passwordHash  String? // Deprecated - no longer used, kept for migration compatibility
 
   // Profile settings
