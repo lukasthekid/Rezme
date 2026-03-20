@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+  weight: ["400"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Resumr",
-  description: "Sign up or log in to Resumr",
+  title: "Resumr – AI Resume Tailoring for Every Job",
+  description:
+    "Stop sending generic applications. Resumr uses AI to tailor your resume and cover letter to each job description in seconds. More interviews, less effort.",
   icons: {
     icon: "/Resumr.svg",
   },
@@ -22,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${plusJakartaSans.variable} ${instrumentSerif.variable}`}>
       <body className="antialiased">
         {children}
       </body>

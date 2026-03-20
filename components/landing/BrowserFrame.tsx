@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
-import { ReactNode, useRef, useState, MouseEvent } from "react";
+import { ReactNode, useRef, MouseEvent } from "react";
 
 interface BrowserFrameProps {
   children?: ReactNode;
@@ -10,6 +10,7 @@ interface BrowserFrameProps {
   alt?: string;
   className?: string;
   interactive?: boolean;
+  imagePriority?: boolean;
 }
 
 export function BrowserFrame({
@@ -18,6 +19,7 @@ export function BrowserFrame({
   alt = "App screenshot",
   className = "",
   interactive = false,
+  imagePriority = false,
 }: BrowserFrameProps) {
   const ref = useRef<HTMLDivElement>(null);
   
@@ -96,16 +98,22 @@ export function BrowserFrame({
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        animate={interactive ? {
-          y: [0, -15, 0],
-        } : {
-          y: [0, -10, 0],
-        }}
-        transition={{
-          duration: interactive ? 4 : 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={
+          interactive
+            ? {
+                y: [0, -15, 0],
+              }
+            : undefined
+        }
+        transition={
+          interactive
+            ? {
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+            : undefined
+        }
         style={interactive ? {
           rotateX,
           rotateY,
@@ -153,7 +161,7 @@ export function BrowserFrame({
               width={1920}
               height={1080}
               className="w-full h-auto block"
-              priority
+              priority={imagePriority}
             />
           ) : (
             children

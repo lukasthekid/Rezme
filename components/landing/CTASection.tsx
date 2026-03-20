@@ -21,11 +21,11 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-8">
-            Ready to land your dream job?
+          <h2 className="display-font text-4xl sm:text-5xl lg:text-6xl text-white mb-8 leading-[1.05]">
+            Ready to land your next role?
           </h2>
           <p className="text-xl text-indigo-100 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of job seekers who are already using AI to stand out from the competition. Stop stressing, start interviewing.
+            Start tailoring for free — no credit card needed. Upgrade to Pro when you&apos;re ready to apply without limits.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -33,20 +33,20 @@ export function CTASection() {
               href="/login"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-indigo-600 bg-white rounded-xl shadow-2xl hover:bg-indigo-50 transition-all duration-200 hover:scale-105"
             >
-              Get Started Now
+              Start for Free
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
-            
+
             <Link
-              href="#how-it-works"
+              href="#pricing"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white border border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200"
             >
-              See how it works
+              See pricing
             </Link>
           </div>
 
           <p className="mt-8 text-sm font-medium text-indigo-300/80">
-            No credit card required • Free trial available • Cancel anytime
+            Free plan requires no credit card · Pro plan can be cancelled monthly
           </p>
         </motion.div>
       </div>

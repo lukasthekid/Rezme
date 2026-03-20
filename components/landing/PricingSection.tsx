@@ -9,14 +9,16 @@ const plans = [
     name: "Starter",
     price: "Free",
     period: "forever",
-    description: "Perfect for testing the waters and creating your first applications.",
+    description: "Everything you need to get started and land your first interviews.",
+    badge: null,
     features: [
       { text: "3 Cover Letter Generations", included: true },
       { text: "3 Resume Generations", included: true },
-      { text: "1 Document Upload (RAG)", included: true },
+      { text: "1 Resume Upload for Context", included: true },
       { text: "Job Tracking Board", included: true },
       { text: "Priority Support", included: false },
     ],
+    footnote: "No credit card required.",
     buttonText: "Start for Free",
     buttonVariant: "outline" as const,
     href: "/login",
@@ -24,16 +26,18 @@ const plans = [
   {
     name: "Pro",
     price: "4€",
-    period: "per week",
-    description: "Unlock unlimited power to apply to as many jobs as you want.",
+    period: "/ week",
+    description: "Unlimited applications, documents, and support — apply without limits.",
     popular: true,
+    badge: "Most Popular",
     features: [
       { text: "Unlimited Cover Letters", included: true },
       { text: "Unlimited Resume Generations", included: true },
-      { text: "Unlimited Document Uploads", included: true },
+      { text: "Unlimited Resume Uploads", included: true },
       { text: "Job Tracking Board", included: true },
       { text: "Priority Support", included: true },
     ],
+    footnote: "Credit card required. Cancel anytime, monthly.",
     buttonText: "Get Unlimited Access",
     buttonVariant: "primary" as const,
     href: "/login",
@@ -42,15 +46,14 @@ const plans = [
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-24 bg-slate-50 relative overflow-hidden">
+    <section id="pricing" className="py-24 bg-white border-t border-slate-100 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-base font-semibold text-indigo-600 tracking-wide uppercase">Pricing</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Simple, transparent pricing
-          </p>
-          <p className="mt-4 text-xl text-slate-600">
-            Start for free, upgrade when you need more power.
+          <h2 className="display-font text-4xl sm:text-5xl text-slate-900 leading-[1.06] mb-4">
+            One free plan. One that removes every limit.
+          </h2>
+          <p className="text-lg text-slate-600 max-w-xl mx-auto">
+            Start tailoring for free — upgrade when you&apos;re ready to apply without limits.
           </p>
         </div>
 
@@ -68,10 +71,10 @@ export function PricingSection() {
                   : "bg-white border border-slate-200 shadow-lg"
               }`}
             >
-              {plan.popular && (
-                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 md:translate-x-0 md:right-8">
-                  <span className="inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold bg-indigo-600 text-white shadow-md">
-                    Most Popular
+              {plan.badge && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold bg-indigo-600 text-white shadow-md whitespace-nowrap">
+                    {plan.badge}
                   </span>
                 </div>
               )}
@@ -117,6 +120,10 @@ export function PricingSection() {
                 {plan.buttonText}
                 {plan.buttonVariant === "primary" && <ArrowRight className="ml-2 w-4 h-4" />}
               </Link>
+
+              {plan.footnote && (
+                <p className="mt-4 text-xs text-center text-slate-400">{plan.footnote}</p>
+              )}
             </motion.div>
           ))}
         </div>
