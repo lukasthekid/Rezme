@@ -5,7 +5,7 @@ echo "Starting application..."
 
 # Run database migrations
 echo "Running database migrations..."
-if node_modules/.bin/prisma migrate deploy; then
+if node ./node_modules/prisma/build/index.js migrate deploy; then
   echo "Migrations completed successfully"
 else
   echo "Warning: Migrations failed or were skipped"
