@@ -1,13 +1,13 @@
 # Deployment Guide
 
-This guide will help you deploy the Resumr application to your server using GitHub Actions, Docker, and Nginx.
+This guide will help you deploy the rezme application to your server using GitHub Actions, Docker, and Nginx.
 
 
 ### Create deployment directory
 
 ```bash
-sudo mkdir -p /opt/stacks/resumr
-sudo chown $USER:$USER /opt/stacks/resumr
+sudo mkdir -p /opt/stacks/rezme
+sudo chown $USER:$USER /opt/stacks/rezme
 ```
 
 ## 2. GitHub Secrets Configuration

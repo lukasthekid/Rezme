@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  DEPLOY_PATH: /opt/stacks/resumr
-  IMAGE_NAME: resumr
+  DEPLOY_PATH: /opt/stacks/rezme
+  IMAGE_NAME: rezme
 
 jobs:
   build-and-deploy:
@@ -32,7 +32,7 @@ jobs:
 
       - name: Save Docker image
         run: |
-          docker save ${{ env.IMAGE_NAME }}:latest | gzip > resumr-image.tar.gz
+          docker save ${{ env.IMAGE_NAME }}:latest | gzip > rezme-image.tar.gz
 
       - name: Setup SSH key
         run: |
@@ -95,16 +95,16 @@ jobs:
 
       - name: Transfer Docker image to server
         run: |
-          scp -i ~/.ssh/id_ed25519 resumr-image.tar.gz ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_PATH }}/
+          scp -i ~/.ssh/id_ed25519 rezme-image.tar.gz ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.DEPLOY_PATH }}/
 
       - name: Load Docker image and deploy
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "\
             cd ${{ env.DEPLOY_PATH }} && \
-            docker load < resumr-image.tar.gz && \
+            docker load < rezme-image.tar.gz && \
             docker compose down || true && \
             docker compose up -d && \
-            rm -f resumr-image.tar.gz && \
+            rm -f rezme-image.tar.gz && \
             echo 'Deployment completed successfully'"
 
       - name: Health check

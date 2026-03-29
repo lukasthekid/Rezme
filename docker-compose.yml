@@ -1,7 +1,7 @@
 services:
-  resumr:
-    image: resumr:latest
-    container_name: resumr
+  rezme:
+    image: rezme:latest
+    container_name: rezme
     restart: unless-stopped
     env_file:
       - .env
