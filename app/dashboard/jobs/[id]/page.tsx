@@ -42,45 +42,43 @@ export default async function JobDetailPage({
 
   return (
     <div className="min-h-screen">
-      {/* Job Header - Full Width */}
-      <header className="bg-surface border-b border-border mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
+      {/* Job Header */}
+      <header className="bg-surface border-b border-border animate-fade-in-up">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             {/* Left Side - Logo & Info */}
-            <div className="flex items-start gap-4 flex-1 min-w-0">
-              {/* Company Logo */}
+            <div className="flex items-center gap-5 flex-1 min-w-0">
               {job.companyLogo ? (
                 <img
                   src={job.companyLogo}
                   alt={job.companyName ? `${job.companyName} logo` : "Company logo"}
-                  className="h-16 w-16 rounded-xl border border-border bg-slate-50 object-contain flex-shrink-0"
+                  className="h-14 w-14 rounded-xl border border-border bg-white object-contain flex-shrink-0 shadow-sm"
                 />
               ) : (
-                <div className="h-16 w-16 rounded-xl border border-border bg-slate-50 flex items-center justify-center flex-shrink-0">
-                  <Building2 className="h-8 w-8 text-foreground-subtle" />
+                <div className="h-14 w-14 rounded-xl border border-border bg-slate-50 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Building2 className="h-7 w-7 text-foreground-subtle" />
                 </div>
               )}
 
-              {/* Job Info */}
               <div className="min-w-0 flex-1">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">
+                <h1 className="display-font text-3xl sm:text-4xl text-foreground mb-1.5 italic">
                   {job.jobTitle || "Job listing"}
                 </h1>
-                <div className="flex flex-wrap items-center gap-2 text-sm text-foreground-muted">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-foreground-muted">
                   <span className="font-semibold text-foreground">
                     {job.companyName || "Unknown company"}
                   </span>
                   {locationParts.length > 0 && (
                     <>
-                      <span className="text-foreground-subtle">•</span>
+                      <span className="text-foreground-subtle">·</span>
                       <span>{locationParts.join(", ")}</span>
                     </>
                   )}
-                  <span className="text-foreground-subtle">•</span>
+                  <span className="text-foreground-subtle">·</span>
                   <span>{postedText}</span>
                   {typeof job.numberOfApplicants === "number" && job.numberOfApplicants > 0 && (
                     <>
-                      <span className="text-foreground-subtle">•</span>
+                      <span className="text-foreground-subtle">·</span>
                       <span>
                         {job.numberOfApplicants.toLocaleString()} applicant
                         {job.numberOfApplicants === 1 ? "" : "s"}
@@ -93,18 +91,16 @@ export default async function JobDetailPage({
 
             {/* Right Side - Actions */}
             <div className="flex items-center gap-3 flex-shrink-0">
-              {/* Status Tracker */}
               <div className="hidden sm:block">
                 <JobApplicationTracker jobId={job.id} />
               </div>
 
-              {/* Link Button */}
               {job.url && !job.url.startsWith("manual://") && (
                 <a
                   href={job.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 hover:bg-slate-200 px-4 py-2.5 text-sm font-medium text-foreground transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-border hover:border-border-hover bg-white hover:bg-slate-50 px-4 py-2.5 text-sm font-medium text-foreground transition-colors shadow-sm"
                   title="Open original posting"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -115,21 +111,19 @@ export default async function JobDetailPage({
           </div>
 
           {/* Mobile Status Tracker */}
-          <div className="sm:hidden mt-4 pt-4 border-t border-border">
+          <div className="sm:hidden mt-5 pt-5 border-t border-border">
             <JobApplicationTracker jobId={job.id} />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-12">
         <div className="max-w-5xl mx-auto">
-          {/* Application Studio & Job Description */}
           <JobDetailsClient 
             jobId={job.id}
             jobDescription={job.jobDescription ?? ""}
           />
-
         </div>
       </div>
     </div>

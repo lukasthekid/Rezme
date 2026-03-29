@@ -92,7 +92,7 @@ export function HeroSection() {
 
         <div className="relative h-[600px] w-full hidden lg:block z-10">
           <BrowserFrame
-            image="/screenshots/dashboard.webp"
+            image="/screenshots/dashboard.jpg"
             alt="Rezme Dashboard"
             className="w-full h-full flex items-center justify-center"
             interactive

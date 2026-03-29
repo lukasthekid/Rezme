@@ -22,7 +22,7 @@ const features = [
     ],
     expandedContent:
       "Rezme reads the full job description — responsibilities, required skills, and preferred qualifications — then cross-references it against your uploaded resume. It surfaces gaps, suggests stronger phrasing for your bullet points, and reorders sections to put your most relevant experience front and center. The whole process takes under 30 seconds.",
-    image: "/screenshots/job-view.webp",
+    image: "/screenshots/job-view.png",
     imageAlt: "AI Job Analysis",
   },
   {
@@ -60,7 +60,7 @@ const features = [
     ],
     expandedContent:
       "Every application you create in Rezme is automatically added to your board with the job title, company, and date. Move cards from Applied → Interview → Offer as you progress. Add notes, attach documents, and set follow-up reminders — everything in one place so nothing falls through the cracks.",
-    image: "/screenshots/applications.webp",
+    image: "/screenshots/applications.jpg",
     imageAlt: "Application Kanban Board",
   },
 ];

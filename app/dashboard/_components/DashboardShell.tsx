@@ -22,7 +22,7 @@ export function DashboardShell({
           <Sidebar userEmail={userEmail} userName={userName} />
           <main className="flex-1 flex flex-col overflow-hidden min-w-0">
             <DashboardHeader />
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col overflow-y-auto">
               {children}
             </div>
           </main>

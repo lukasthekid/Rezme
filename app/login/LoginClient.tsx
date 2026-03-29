@@ -27,11 +27,11 @@ export function LoginClient() {
               className="h-12 w-12"
             />
             <span className="text-4xl font-bold tracking-tight">
-              Resum<span className="text-indigo-400">r</span>
+              Rez<span className="text-indigo-400">me</span>
             </span>
           </Link>
           <h1 className="text-4xl font-bold tracking-tight mb-3 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-            Welcome to Rezme
+            Welcome
           </h1>
           <p className="text-lg text-slate-300">
             Sign in with Google, GitHub, or LinkedIn to continue

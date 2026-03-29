@@ -106,7 +106,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
               <img src="/Rezme.svg" alt="Rezme" className="h-10 w-10 shrink-0" />
               <div className="min-w-0">
                 <div className="text-base font-bold tracking-tight text-foreground whitespace-nowrap">
-                  Resum<span className="text-indigo-600">r</span>
+                  Rez<span className="text-indigo-600">me</span>
                 </div>
                 <div className="text-xs text-foreground-subtle whitespace-nowrap">
                   AI-Powered Career Tools
