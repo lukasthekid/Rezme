@@ -34,12 +34,12 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <img 
-              src="/Resumr.svg" 
-              alt="Resumr Logo" 
+              src="/Rezme.svg"
+              alt="Rezme Logo"
               className="w-8 h-8 object-contain group-hover:scale-105 transition-transform" 
             />
             <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-indigo-900 transition-colors">
-              Resumr
+              Rezme
             </span>
           </Link>
 

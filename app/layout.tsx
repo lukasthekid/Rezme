@@ -16,11 +16,11 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Resumr – AI Resume Tailoring for Every Job",
+  title: "Rezme – AI Resume Tailoring for Every Job",
   description:
-    "Stop sending generic applications. Resumr uses AI to tailor your resume and cover letter to each job description in seconds. More interviews, less effort.",
+    "Stop sending generic applications. Rezme uses AI to tailor your resume and cover letter to each job description in seconds. More interviews, less effort.",
   icons: {
-    icon: "/Resumr.svg",
+    icon: "/Rezme.svg",
   },
 };
 

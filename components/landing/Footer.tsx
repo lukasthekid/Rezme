@@ -11,17 +11,17 @@ export function Footer() {
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <Image
-                src="/Resumr.svg"
-                alt="Resumr Logo"
+                src="/Rezme.svg"
+                alt="Rezme Logo"
                 width={32}
                 height={32}
                 className="object-contain"
               />
-              <span className="text-2xl font-bold text-white">Resumr</span>
+              <span className="text-2xl font-bold text-white">Rezme</span>
             </Link>
             <p className="text-slate-400 mb-6 max-w-sm">
               AI-powered resume and cover letter tailoring for every job
-              description. Get hired faster with Resumr.
+              description. Get hired faster with Rezme.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="hover:text-white transition-colors">
@@ -82,7 +82,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm">© {new Date().getFullYear()} Resumr. All rights reserved.</p>
+          <p className="text-sm">© {new Date().getFullYear()} Rezme. All rights reserved.</p>
           <p className="text-sm">Made with ❤️ for job seekers</p>
         </div>
       </div>

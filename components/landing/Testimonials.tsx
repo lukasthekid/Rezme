@@ -12,7 +12,7 @@ const stats = [
 const testimonials = [
   {
     content:
-      "I was applying to 10 jobs a day with no response. With Resumr, I tailored my resume for a Senior Product Manager role and got an interview the next day.",
+      "I was applying to 10 jobs a day with no response. With Rezme, I tailored my resume for a Senior Product Manager role and got an interview the next day.",
     author: "Sarah J.",
     role: "Product Manager at TechFlow",
     avatar: "S",

@@ -31,7 +31,7 @@ export default async function BillingPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Billing</h1>
         <p className="text-sm text-foreground-muted mt-1">
-          Manage your Resumr subscription and payment method.
+          Manage your Rezme subscription and payment method.
         </p>
       </div>
 

@@ -43,7 +43,7 @@ export function HeroSection() {
             transition={{ duration: 0.5, delay: 0.16 }}
             className="text-lg sm:text-xl text-slate-700 mb-8 max-w-lg leading-relaxed"
           >
-            Keep your voice. Sharpen the message. Resumr matches your experience to each job posting without the repetitive rewriting.
+            Keep your voice. Sharpen the message. Rezme matches your experience to each job posting without the repetitive rewriting.
           </motion.p>
 
           <motion.div
@@ -75,7 +75,7 @@ export function HeroSection() {
             className="pt-8 border-t border-slate-200/80"
           >
             <p className="text-sm text-slate-500 font-medium mb-4">
-              Teams and candidates use Resumr across
+              Teams and candidates use Rezme across
             </p>
             <div className="flex flex-wrap gap-3">
               {["Product", "Engineering", "Marketing", "Operations"].map((domain) => (
@@ -93,7 +93,7 @@ export function HeroSection() {
         <div className="relative h-[600px] w-full hidden lg:block z-10">
           <BrowserFrame
             image="/screenshots/dashboard.webp"
-            alt="Resumr Dashboard"
+            alt="Rezme Dashboard"
             className="w-full h-full flex items-center justify-center"
             interactive
             imagePriority

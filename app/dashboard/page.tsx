@@ -79,7 +79,7 @@ export default async function DashboardHome() {
         {/* Welcome Header */}
         <header className="space-y-3">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
-            Welcome to Resumr, {firstName}
+            Welcome to Rezme, {firstName}
           </h1>
           <p className="text-lg text-foreground-muted">
             Let's get you hired. Complete these steps to start generating tailored resumes and cover letters.
@@ -320,100 +320,107 @@ export default async function DashboardHome() {
             </div>
 
             {recentApplication ? (
-              <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Company
-                        </th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Role
-                        </th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Status
-                        </th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Timeline
-                        </th>
-                        <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {(() => {
-                        const app = recentApplication;
-                        const locationParts = [app.job.locationCity, app.job.country].filter(
-                          (v) => v && String(v).trim().length > 0
-                        );
-                        const locationStr = locationParts.join(", ") || "—";
+              (() => {
+                const app = recentApplication;
+                const locationParts = [app.job.locationCity, app.job.country].filter(
+                  (v) => v && String(v).trim().length > 0
+                );
+                const locationStr = locationParts.join(", ") || "Location unavailable";
+                const timelineLabel = app.appliedAt ? "Applied on" : "Updated on";
+                const timelineDate = new Date(app.appliedAt ?? app.updatedAt).toLocaleDateString(
+                  undefined,
+                  {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }
+                );
 
-                        return (
-                          <tr className="bg-white hover:bg-slate-50/80 transition-colors">
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
-                                {app.job.companyLogo ? (
-                                  <img
-                                    src={app.job.companyLogo}
-                                    alt=""
-                                    className="h-10 w-10 rounded-lg border border-slate-200 bg-slate-50 object-contain"
-                                  />
-                                ) : (
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-xs font-medium text-slate-400">
-                                    {app.job.companyName?.charAt(0) ?? "?"}
-                                  </div>
-                                )}
-                                <div className="min-w-0">
-                                  <p className="font-semibold text-slate-900">
-                                    {app.job.companyName || "Unknown"}
-                                  </p>
-                                  <p className="text-xs text-slate-500 truncate max-w-[180px]">
-                                    {locationStr}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3">
-                              <p className="text-sm font-medium text-slate-800">
-                                {app.job.jobTitle || "—"}
+                return (
+                  <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[linear-gradient(180deg,_rgba(255,255,255,1)_0%,_rgba(248,250,252,0.96)_100%)] shadow-sm">
+                    <div className="border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.12),_transparent_45%),linear-gradient(180deg,_rgba(255,255,255,0.96)_0%,_rgba(248,250,252,0.9)_100%)] p-4 sm:p-5">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+                          {app.job.companyLogo ? (
+                            <img
+                              src={app.job.companyLogo}
+                              alt=""
+                              className="h-12 w-12 flex-shrink-0 rounded-2xl border border-slate-200 bg-white object-contain p-1.5 shadow-sm sm:h-14 sm:w-14"
+                            />
+                          ) : (
+                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-500 shadow-sm sm:h-14 sm:w-14">
+                              {app.job.companyName?.charAt(0) ?? "?"}
+                            </div>
+                          )}
+
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="truncate text-base font-bold text-slate-950 sm:text-lg">
+                                {app.job.companyName || "Unknown company"}
                               </p>
-                            </td>
-                            <td className="px-4 py-3">
-                              <ApplicationStatusBadge status={app.stage} />
-                            </td>
-                            <td className="px-4 py-3 text-sm text-slate-600">
-                              {app.appliedAt
-                                ? `Applied on ${new Date(app.appliedAt).toLocaleDateString(undefined, {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  })}`
-                                : `Updated on ${new Date(app.updatedAt).toLocaleDateString(undefined, {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  })}`}
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <div className="flex items-center justify-end gap-1">
-                                <Link
-                                  href={`/dashboard/jobs/${app.job.id}`}
-                                  title="View details"
-                                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition-colors"
-                                >
-                                  <ArrowRight className="h-4 w-4" />
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                              <span className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-700">
+                                Most recent
+                              </span>
+                            </div>
+                            <p className="mt-1 truncate text-sm text-slate-500">{locationStr}</p>
+                            <h4 className="mt-3 text-lg font-semibold leading-snug text-slate-900 sm:text-xl">
+                              {app.job.jobTitle || "Untitled role"}
+                            </h4>
+                          </div>
+                        </div>
+
+                        <div className="sm:text-right">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+                            Status
+                          </p>
+                          <div className="mt-2">
+                            <ApplicationStatusBadge status={app.stage} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Timeline
+                          </p>
+                          <p className="mt-1 text-sm font-medium text-slate-700">
+                            {timelineLabel}
+                          </p>
+                          <p className="text-sm text-slate-500">{timelineDate}</p>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Next step
+                          </p>
+                          <p className="mt-1 text-sm text-slate-600">
+                            Review the application details, attached documents, and progress.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+                        <Link
+                          href={`/dashboard/jobs/${app.job.id}`}
+                          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md"
+                        >
+                          View details
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                        <Link
+                          href="/dashboard/applications"
+                          className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                        >
+                          See all applications
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
             ) : (
               <div className="rounded-xl border-2 border-dashed border-border bg-slate-50/50 py-8 px-6 text-center">
                 <div className="mx-auto h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">

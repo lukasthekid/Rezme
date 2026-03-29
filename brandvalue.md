@@ -1,6 +1,6 @@
-# Resumr Brand Value Document
+# Rezme Brand Value Document
 
-Reference document for the Resumr brand. Use this when redesigning the landing page or making design decisions to stay consistent with brand identity.
+Reference document for the Rezme brand. Use this when redesigning the landing page or making design decisions to stay consistent with brand identity.
 
 ---
 
@@ -8,8 +8,8 @@ Reference document for the Resumr brand. Use this when redesigning the landing p
 
 | Element | Value |
 |---------|-------|
-| **Name** | Resumr |
-| **Logo treatment** | "Resum" in slate-900, "r" in indigo |
+| **Name** | Rezme |
+| **Logo treatment** | "Rez" in slate-900, "me" in indigo |
 | **Tagline / Core promise** | Stop sending generic applications. Get hired faster. |
 | **One-liner** | AI-powered resume and cover letter tailoring for every job description—in seconds. |
 

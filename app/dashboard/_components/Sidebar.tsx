@@ -103,7 +103,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
         >
           {expanded && (
             <Link href="/dashboard" className="flex items-center gap-3 min-w-0">
-              <img src="/Resumr.svg" alt="Resumr" className="h-10 w-10 shrink-0" />
+              <img src="/Rezme.svg" alt="Rezme" className="h-10 w-10 shrink-0" />
               <div className="min-w-0">
                 <div className="text-base font-bold tracking-tight text-foreground whitespace-nowrap">
                   Resum<span className="text-indigo-600">r</span>
@@ -117,7 +117,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
 
           {!expanded && (
             <Link href="/dashboard" title="Dashboard">
-              <img src="/Resumr.svg" alt="Resumr" className="h-8 w-8" />
+              <img src="/Rezme.svg" alt="Rezme" className="h-8 w-8" />
             </Link>
           )}
 

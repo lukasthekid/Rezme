@@ -9,7 +9,7 @@ const steps = [
     number: "01",
     title: "Import the job",
     description:
-      "Paste a URL from LinkedIn, Indeed, or Glassdoor. Resumr extracts the role, requirements, and key skills automatically.",
+      "Paste a URL from LinkedIn, Indeed, or Glassdoor. Rezme extracts the role, requirements, and key skills automatically.",
     accentBg: "bg-blue-600",
     ringColor: "ring-blue-100",
   },
