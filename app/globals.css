@@ -122,6 +122,40 @@ h3 {
   animation-delay: 300ms;
 }
 
+/* Cookie consent banner — theme overrides to match Rezme palette */
+#cc-main {
+  --cc-font-family: var(--font-sans);
+  --cc-bg: #ffffff;
+  --cc-primary-color: #0f172a;
+  --cc-secondary-color: #64748b;
+  --cc-btn-primary-bg: #4f46e5;
+  --cc-btn-primary-color: #ffffff;
+  --cc-btn-primary-border-color: #4f46e5;
+  --cc-btn-primary-hover-bg: #4338ca;
+  --cc-btn-primary-hover-color: #ffffff;
+  --cc-btn-primary-hover-border-color: #4338ca;
+  --cc-btn-secondary-bg: #f1f5f9;
+  --cc-btn-secondary-color: #0f172a;
+  --cc-btn-secondary-border-color: #e2e8f0;
+  --cc-btn-secondary-hover-bg: #e2e8f0;
+  --cc-btn-secondary-hover-color: #0f172a;
+  --cc-btn-secondary-hover-border-color: #cbd5e1;
+  --cc-separator-border-color: #e2e8f0;
+  --cc-toggle-on-bg: #4f46e5;
+  --cc-toggle-off-bg: #cbd5e1;
+  --cc-toggle-readonly-bg: #94a3b8;
+  --cc-cookie-category-block-bg: #f8fafc;
+  --cc-cookie-category-block-border: #e2e8f0;
+  --cc-overlay-bg: rgba(15, 23, 42, 0.45);
+  --cc-webkit-scrollbar-bg: #f1f5f9;
+  --cc-webkit-scrollbar-hover-bg: #cbd5e1;
+  --cc-footer-bg: #f8fafc;
+  --cc-footer-color: #64748b;
+  --cc-footer-border-color: #e2e8f0;
+  --cc-modal-border-radius: 1rem;
+  --cc-btn-border-radius: 0.5rem;
+}
+
 /* Generation modal: progress bar fills over ~90s */
 @keyframes generation-progress {
   from {

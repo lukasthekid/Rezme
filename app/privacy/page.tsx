@@ -17,8 +17,8 @@ export default function PrivacyPage() {
   return (
     <LegalPageLayout
       title="Privacy Policy"
-      description="This Privacy Policy explains what information Rezme collects, how we use it to provide the service, and the choices you have when using our resume, cover letter, and job tracking tools."
-      lastUpdated="March 27, 2026"
+      description="This Privacy Policy explains what information Rezme collects, how we use it to provide the service, and the choices you have. It also describes your rights under the EU General Data Protection Regulation (GDPR)."
+      lastUpdated="March 30, 2026"
       contactEmail={CONTACT_EMAIL}
     >
       <LegalSection title="Overview">
@@ -32,6 +32,37 @@ export default function PrivacyPage() {
           By using Rezme, you agree that we may process your information as described
           in this policy. If you have questions about how your data is handled, contact{" "}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="Data Controller">
+        <p>
+          The controller responsible for the processing of your personal data on this
+          website within the meaning of the General Data Protection Regulation (GDPR) is:
+        </p>
+        <p>
+          {/* TODO: Replace with your real name and address */}
+          <strong>Your Full Name</strong>
+          <br />
+          Street Address 123
+          <br />
+          12345 City
+          <br />
+          Germany
+          <br />
+          Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        </p>
+        <p>
+          See our <a href="/impressum">Impressum</a> for full legal disclosure.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="Data Hosting in the EU">
+        <p>
+          Your data is stored on servers located in <strong>Germany</strong> within
+          the European Union. We have chosen a German hosting provider to ensure
+          that your personal data remains subject to European data protection
+          standards and does not leave the EU for primary storage purposes.
         </p>
       </LegalSection>
 
@@ -69,6 +100,39 @@ export default function PrivacyPage() {
         </ul>
       </LegalSection>
 
+      <LegalSection title="Legal Basis for Processing (GDPR Art. 6)">
+        <p>
+          We process your personal data on the following legal grounds under the
+          General Data Protection Regulation:
+        </p>
+        <ul>
+          <li>
+            <strong>Contract performance (Art. 6(1)(b) GDPR):</strong> Processing
+            of account data, profile information, resume and document data, job-search
+            data, and AI-generated outputs is necessary to provide you with the
+            services you signed up for.
+          </li>
+          <li>
+            <strong>Legitimate interest (Art. 6(1)(f) GDPR):</strong> Essential
+            cookies and session data are processed based on our legitimate interest
+            in maintaining a secure, functional service. This includes authentication
+            session tokens required to keep you signed in.
+          </li>
+          <li>
+            <strong>Contract performance and legal obligation (Art. 6(1)(b) and
+            Art. 6(1)(c) GDPR):</strong> Billing data processed through Stripe is
+            necessary both to fulfill your subscription contract and to comply with
+            tax and accounting obligations.
+          </li>
+          <li>
+            <strong>Consent (Art. 6(1)(a) GDPR):</strong> Where we use optional
+            cookies (such as analytics), we will only do so after obtaining your
+            explicit consent via the cookie consent banner. You may withdraw consent
+            at any time through the cookie preferences.
+          </li>
+        </ul>
+      </LegalSection>
+
       <LegalSection title="How We Use Information">
         <ul>
           <li>Provide, operate, and secure your Rezme account and session.</li>
@@ -81,7 +145,7 @@ export default function PrivacyPage() {
         </ul>
       </LegalSection>
 
-      <LegalSection title="AI Features And External Processing">
+      <LegalSection title="AI Features and External Processing">
         <p>
           Some Rezme features rely on external service providers to process information
           on our behalf. When you use generation or import features, relevant content may
@@ -124,12 +188,103 @@ export default function PrivacyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="Cookies And Session Storage">
+      <LegalSection title="International Data Transfers">
+        <p>
+          Your primary data is stored on servers in Germany within the European Union.
+          However, some of the third-party services we use to operate Rezme are based
+          outside the EU/EEA:
+        </p>
+        <ul>
+          <li>
+            <strong>Google, GitHub, and LinkedIn</strong> (authentication providers)
+            may process data in the United States.
+          </li>
+          <li>
+            <strong>Stripe</strong> (payment processing) processes billing data in the
+            United States and other countries.
+          </li>
+          <li>
+            <strong>Groq</strong> (AI processing) may process data in the United States.
+          </li>
+        </ul>
+        <p>
+          Where personal data is transferred outside the EU/EEA, we rely on appropriate
+          safeguards such as the EU Standard Contractual Clauses (SCCs), adequacy
+          decisions by the European Commission (including the EU-U.S. Data Privacy
+          Framework where applicable), or the provider&apos;s binding corporate rules to
+          ensure an adequate level of data protection.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="Cookies and Session Storage">
         <p>
           Rezme uses essential cookies and related session mechanisms to keep users
           signed in, secure authenticated routes, and maintain account access. These
           cookies are required for core product functionality and are not optional if you
           want to use logged-in areas of the service.
+        </p>
+        <p>
+          If we introduce optional cookies in the future (such as analytics cookies),
+          they will only be set after you give explicit consent through our cookie
+          consent banner. You can manage your cookie preferences at any time by clicking
+          the &quot;Manage preferences&quot; option in the cookie banner.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="Your Rights Under GDPR (Art. 15–22)">
+        <p>
+          As a data subject under the General Data Protection Regulation, you have the
+          following rights regarding your personal data:
+        </p>
+        <ul>
+          <li>
+            <strong>Right of access (Art. 15):</strong> You have the right to request
+            confirmation of whether we process your personal data and to obtain a copy
+            of that data.
+          </li>
+          <li>
+            <strong>Right to rectification (Art. 16):</strong> You have the right to
+            request correction of inaccurate personal data or completion of incomplete
+            data.
+          </li>
+          <li>
+            <strong>Right to erasure (Art. 17):</strong> You have the right to request
+            deletion of your personal data, subject to legal retention obligations.
+          </li>
+          <li>
+            <strong>Right to restriction (Art. 18):</strong> You have the right to
+            request restriction of processing under certain circumstances.
+          </li>
+          <li>
+            <strong>Right to data portability (Art. 20):</strong> You have the right to
+            receive your personal data in a structured, commonly used, machine-readable
+            format and to transmit it to another controller.
+          </li>
+          <li>
+            <strong>Right to object (Art. 21):</strong> You have the right to object to
+            processing based on legitimate interest at any time. We will then stop
+            processing unless we can demonstrate compelling legitimate grounds.
+          </li>
+          <li>
+            <strong>Right to withdraw consent (Art. 7(3)):</strong> Where processing is
+            based on consent (e.g., optional cookies), you may withdraw your consent at
+            any time. Withdrawal does not affect the lawfulness of processing carried
+            out before the withdrawal.
+          </li>
+        </ul>
+        <p>
+          To exercise any of these rights, contact us at{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We will respond
+          to your request within one month as required by GDPR.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="Right to Complain to a Supervisory Authority">
+        <p>
+          If you believe that the processing of your personal data infringes the GDPR,
+          you have the right to lodge a complaint with a data protection supervisory
+          authority, in particular in the EU member state of your habitual residence,
+          your place of work, or the place of the alleged infringement.
         </p>
       </LegalSection>
 
@@ -154,16 +309,7 @@ export default function PrivacyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="Your Choices">
-        <ul>
-          <li>You can choose what profile details, uploaded files, and instructions you provide.</li>
-          <li>You can manage your subscription status through the billing tools made available in the app.</li>
-          <li>You can contact us to request access, correction, or deletion of information we hold about you.</li>
-          <li>You can stop using the service at any time, though some retained records may remain as described above.</li>
-        </ul>
-      </LegalSection>
-
-      <LegalSection title="Changes To This Policy">
+      <LegalSection title="Changes to This Policy">
         <p>
           We may update this Privacy Policy from time to time to reflect changes to the
           product, our providers, or legal requirements. When we do, we will update the

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Twitter, Linkedin, ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
@@ -77,12 +77,21 @@ export function Footer() {
                   Terms of Service
                 </Link>
               </li>
+              <li>
+                <Link href="/impressum" className="hover:text-indigo-400 transition-colors">
+                  Impressum
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm">© {new Date().getFullYear()} Rezme. All rights reserved.</p>
+          <div className="flex items-center gap-1.5 text-sm text-slate-500">
+            <ShieldCheck className="h-4 w-4 text-emerald-500" />
+            <span>Data hosted in Germany</span>
+          </div>
           <p className="text-sm">Made with ❤️ for job seekers</p>
         </div>
       </div>

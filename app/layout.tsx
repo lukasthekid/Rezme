@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
+import CookieConsentBanner from "@/components/CookieConsent";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" className={`${plusJakartaSans.variable} ${instrumentSerif.variable}`}>
       <body className="antialiased">
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   );
