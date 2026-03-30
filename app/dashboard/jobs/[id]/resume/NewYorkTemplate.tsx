@@ -6,29 +6,25 @@ import {
   EditableField,
   EditableListItem,
   EditableSectionItem,
-  RichEditor,
 } from '@/components/resume';
 import { useResumeStore } from '@/store';
 import { LinkIcon } from 'lucide-react';
 
 /**
- * ModernTemplate (Two Column Template) - A professional 2-column resume layout
- * 
+ * NewYorkTemplate (Two Column) — professional 2-column resume layout.
+ *
  * Layout:
- * - Left column (30%): Contact info, Skills, Education
- * - Right column (70%): Work Experience, Projects
- * 
- * Uses EditableField for simple strings and RichEditor for rich content
+ * - Left column (30%): Education, Skills
+ * - Right column (70%): Professional Experience, Projects, Extracurricular Activities
  */
-export function ModernTemplate() {
-  // Subscribe to store
+export function NewYorkTemplate() {
   const personal = useResumeStore((state) => state.resumeData.personal);
   const education = useResumeStore((state) => state.resumeData.education);
   const workExperience = useResumeStore((state) => state.resumeData.workExperience);
   const projects = useResumeStore((state) => state.resumeData.projects);
   const skills = useResumeStore((state) => state.resumeData.skills);
+  const extracurriculars = useResumeStore((state) => state.resumeData.extracurriculars);
 
-  // Get actions
   const updatePersonal = useResumeStore((state) => state.updatePersonal);
   const updateEducation = useResumeStore((state) => state.updateEducation);
   const updateEducationHighlight = useResumeStore((state) => state.updateEducationHighlight);
@@ -38,6 +34,10 @@ export function ModernTemplate() {
   );
   const updateProject = useResumeStore((state) => state.updateProject);
   const updateProjectDescription = useResumeStore((state) => state.updateProjectDescription);
+  const updateExtracurricular = useResumeStore((state) => state.updateExtracurricular);
+  const updateExtracurricularDescription = useResumeStore(
+    (state) => state.updateExtracurricularDescription
+  );
   const addWorkExperienceAchievement = useResumeStore((state) => state.addWorkExperienceAchievement);
   const removeWorkExperienceAchievement = useResumeStore(
     (state) => state.removeWorkExperienceAchievement
@@ -46,17 +46,24 @@ export function ModernTemplate() {
   const removeEducationHighlight = useResumeStore((state) => state.removeEducationHighlight);
   const addProjectDescription = useResumeStore((state) => state.addProjectDescription);
   const removeProjectDescription = useResumeStore((state) => state.removeProjectDescription);
+  const addExtracurricularDescription = useResumeStore(
+    (state) => state.addExtracurricularDescription
+  );
+  const removeExtracurricularDescription = useResumeStore(
+    (state) => state.removeExtracurricularDescription
+  );
   const addWorkExperience = useResumeStore((state) => state.addWorkExperience);
   const removeWorkExperience = useResumeStore((state) => state.removeWorkExperience);
   const addEducation = useResumeStore((state) => state.addEducation);
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const addExtracurricular = useResumeStore((state) => state.addExtracurricular);
+  const removeExtracurricular = useResumeStore((state) => state.removeExtracurricular);
   const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
   const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
   const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
-  // Helper function to format URLs for display
   const formatUrl = (url: string): string => {
     if (!url) return '';
     return url
@@ -65,34 +72,27 @@ export function ModernTemplate() {
       .replace(/\/$/, '');
   };
 
-  // Helper to create contact items with proper structure
-  // Only show: email, phone, and ONE link (priority: LinkedIn > GitHub > Website)
-  
-  // Determine which link to show (priority order)
-  const linkField = personal?.linkedin 
+  const linkField = personal?.linkedin
     ? { field: 'linkedin' as const, value: personal.linkedin, placeholder: 'linkedin.com/in/profile' }
-    : personal?.github 
+    : personal?.github
     ? { field: 'github' as const, value: personal.github, placeholder: 'github.com/username' }
-    : personal?.website 
+    : personal?.website
     ? { field: 'website' as const, value: personal.website, placeholder: 'yourwebsite.com' }
     : null;
 
   const contactItems = [
-    // 1. Email (always show)
     {
       value: personal?.email,
       onChange: (value: string) => updatePersonal('email', value),
       placeholder: 'email@example.com',
       type: 'text' as const,
     },
-    // 2. Phone (always show)
     {
       value: personal?.phone,
       onChange: (value: string) => updatePersonal('phone', value),
       placeholder: '+1 234 567 890',
       type: 'text' as const,
     },
-    // 3. ONE link (LinkedIn OR GitHub OR Website - whichever is available first)
     ...(linkField
       ? [
           {
@@ -103,13 +103,12 @@ export function ModernTemplate() {
           },
         ]
       : []),
-  ]
+  ];
 
   return (
     <div className="h-full pt-2">
-      {/* HEADER - Full Width, Compact & Centered */}
+      {/* HEADER */}
       <header className="mb-5 pb-3 border-b-2 border-gray-800 text-center">
-        {/* Name - Large and Centered */}
         <div className="mb-2">
           <EditableField
             value={personal?.name}
@@ -118,30 +117,17 @@ export function ModernTemplate() {
             className="text-4xl font-bold uppercase tracking-wide text-gray-900"
           />
         </div>
-
-        {/* Contact Info - Full Width, Centered with Appropriate Field Widths */}
         <div className="w-full">
           <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-xs">
             {contactItems.map((item, idx) => (
               <div key={idx} className="flex items-center gap-x-3">
                 {item.type === 'link' ? (
                   <a
-                    href={
-                      item.value?.startsWith('http')
-                        ? item.value
-                        : item.value
-                        ? `https://${item.value}`
-                        : '#'
-                    }
+                    href={item.value?.startsWith('http') ? item.value : item.value ? `https://${item.value}` : '#'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 hover:underline transition-colors w-64"
-                    onClick={(e) => {
-                      // Prevent navigation when editing
-                      if (e.currentTarget.querySelector('input')) {
-                        e.preventDefault();
-                      }
-                    }}
+                    onClick={(e) => { if (e.currentTarget.querySelector('input')) e.preventDefault(); }}
                   >
                     <EditableField
                       value={item.value}
@@ -155,10 +141,9 @@ export function ModernTemplate() {
                     value={item.value}
                     onChange={item.onChange}
                     placeholder={item.placeholder}
-                    className={`text-xs text-gray-700`}
+                    className="text-xs text-gray-700"
                   />
                 )}
-                {/* Separator - hide for last item */}
                 {idx < contactItems.length - 1 && (
                   <span className="text-gray-400">•</span>
                 )}
@@ -168,9 +153,9 @@ export function ModernTemplate() {
         </div>
       </header>
 
-      {/* TWO COLUMN LAYOUT - Stacks on mobile */}
+      {/* TWO COLUMN LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
-        {/* LEFT COLUMN - Contact & Skills */}
+        {/* LEFT COLUMN */}
         <aside className="space-y-6">
           {/* EDUCATION */}
           <section>
@@ -179,10 +164,7 @@ export function ModernTemplate() {
             </h2>
             <div className="space-y-4">
               {(education || []).map((edu, idx) => (
-                <EditableSectionItem
-                  key={idx}
-                  onRemove={() => removeEducation(idx)}
-                >
+                <EditableSectionItem key={idx} onRemove={() => removeEducation(idx)}>
                   <div className="text-xs">
                     <EditableField
                       value={edu.institution}
@@ -222,10 +204,7 @@ export function ModernTemplate() {
                           placeholder="Highlight..."
                         />
                       ))}
-                      <AddListItemButton
-                        onClick={() => addEducationHighlight(idx, '')}
-                        label="highlight"
-                      />
+                      <AddListItemButton onClick={() => addEducationHighlight(idx, '')} label="highlight" />
                     </ul>
                   </div>
                 </EditableSectionItem>
@@ -263,9 +242,9 @@ export function ModernTemplate() {
           </section>
         </aside>
 
-        {/* RIGHT COLUMN - Experience & Projects */}
+        {/* RIGHT COLUMN */}
         <main className="space-y-6">
-          {/* WORK EXPERIENCE */}
+          {/* PROFESSIONAL EXPERIENCE */}
           <section>
             <h2 className="text-xs font-bold uppercase tracking-widest border-b-2 border-gray-800 pb-1 mb-3 text-gray-900">
               Professional Experience
@@ -318,17 +297,12 @@ export function ModernTemplate() {
                         <EditableListItem
                           key={aIdx}
                           content={achievement}
-                          onChange={(html) =>
-                            updateWorkExperienceAchievement(idx, aIdx, html)
-                          }
+                          onChange={(html) => updateWorkExperienceAchievement(idx, aIdx, html)}
                           onRemove={() => removeWorkExperienceAchievement(idx, aIdx)}
                           placeholder="Describe your achievement with impact and metrics..."
                         />
                       ))}
-                      <AddListItemButton
-                        onClick={() => addWorkExperienceAchievement(idx, '')}
-                        label="achievement"
-                      />
+                      <AddListItemButton onClick={() => addWorkExperienceAchievement(idx, '')} label="achievement" />
                     </ul>
                   </div>
                 </EditableSectionItem>
@@ -383,15 +357,70 @@ export function ModernTemplate() {
                           placeholder="Describe the project and your contributions..."
                         />
                       ))}
+                      <AddListItemButton onClick={() => addProjectDescription(idx, '')} label="description" />
+                    </ul>
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addProject()} label="project" />
+            </div>
+          </section>
+
+          {/* EXTRACURRICULAR ACTIVITIES */}
+          <section>
+            <h2 className="text-xs font-bold uppercase tracking-widest border-b-2 border-gray-800 pb-1 mb-3 text-gray-900">
+              Extracurricular Activities
+            </h2>
+            <div className="space-y-4">
+              {(extracurriculars || []).map((extra, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeExtracurricular(idx)}>
+                  <div>
+                    <div className="flex justify-between items-baseline mb-1">
+                      <div className="flex-1">
+                        <EditableField
+                          value={extra.activity}
+                          onChange={(v) => updateExtracurricular(idx, 'activity', v)}
+                          placeholder="Activity Name"
+                          className="font-semibold text-sm text-gray-900"
+                        />
+                      </div>
+                      <div className="text-right text-xs text-gray-600 ml-4 w-32">
+                        <div className="flex items-center gap-1 justify-end">
+                          <EditableField
+                            value={extra.startDate}
+                            onChange={(v) => updateExtracurricular(idx, 'startDate', v)}
+                            placeholder="Start"
+                            className="text-xs text-right"
+                          />
+                          <span>–</span>
+                          <EditableField
+                            value={extra.endDate}
+                            onChange={(v) => updateExtracurricular(idx, 'endDate', v)}
+                            placeholder="End"
+                            className="text-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <ul className="mt-2 space-y-1.5">
+                      {(extra.description || []).map((desc, dIdx) => (
+                        <EditableListItem
+                          key={dIdx}
+                          content={desc}
+                          onChange={(html) => updateExtracurricularDescription(idx, dIdx, html)}
+                          onRemove={() => removeExtracurricularDescription(idx, dIdx)}
+                          placeholder="Describe the activity..."
+                        />
+                      ))}
                       <AddListItemButton
-                        onClick={() => addProjectDescription(idx, '')}
+                        onClick={() => addExtracurricularDescription(idx, '')}
                         label="description"
                       />
                     </ul>
                   </div>
                 </EditableSectionItem>
               ))}
-              <AddSectionButton onClick={() => addProject()} label="project" />
+              <AddSectionButton onClick={() => addExtracurricular()} label="activity" />
             </div>
           </section>
         </main>

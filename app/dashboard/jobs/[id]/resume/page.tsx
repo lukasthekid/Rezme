@@ -4,10 +4,12 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { A4Page } from "@/components/resume";
-import { ModernTemplate } from "./ModernTemplate";
-import { ClassicTemplate } from "./ClassicTemplate";
-import { DACHTemplate } from "./DACHTemplate";
-import { EuropeanTemplate } from "./EuropeanTemplate";
+import { NewYorkTemplate } from "./NewYorkTemplate";
+import { LondonTemplate } from "./LondonTemplate";
+import { ViennaTemplate } from "./ViennaTemplate";
+import { ParisTemplate } from "./ParisTemplate";
+import { TokyoTemplate } from "./TokyoTemplate";
+import { BerlinTemplate } from "./BerlinTemplate";
 import { useResumeStore } from "@/store";
 import type { ResumeData } from "@/types/resume";
 
@@ -105,7 +107,7 @@ export default function ResumeViewerPage() {
 
   const [loading, setLoading] = useState(true);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
-  const [layout, setLayout] = useState<"modern" | "classic" | "dach" | "european">("modern");
+  const [layout, setLayout] = useState<"newyork" | "london" | "vienna" | "paris" | "tokyo" | "berlin">("newyork");
 
   // Get store actions
   const setResumeData = useResumeStore((state) => state.setResumeData);
@@ -221,14 +223,16 @@ export default function ResumeViewerPage() {
                 <select
                   value={layout}
                   onChange={(e) =>
-                    setLayout(e.target.value as "modern" | "classic" | "dach" | "european")
+                    setLayout(e.target.value as "newyork" | "london" | "vienna" | "paris" | "tokyo" | "berlin")
                   }
                   className="text-xs border border-slate-300 rounded-md px-3 py-1.5 bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 >
-                  <option value="modern">Two Column</option>
-                  <option value="classic">Tech</option>
-                  <option value="dach">DACH</option>
-                  <option value="european">European (photo)</option>
+                  <option value="newyork">New York</option>
+                  <option value="london">London</option>
+                  <option value="vienna">Vienna</option>
+                  <option value="paris">Paris</option>
+                  <option value="tokyo">Tokyo</option>
+                  <option value="berlin">Berlin</option>
                 </select>
               </div>
 
@@ -313,14 +317,18 @@ export default function ResumeViewerPage() {
           {/* A4 Resume Document with Selected Template */}
           <div className="overflow-x-auto -mx-4 sm:mx-0 print:mx-0">
           <A4Page>
-            {layout === "modern" ? (
-              <ModernTemplate />
-            ) : layout === "dach" ? (
-              <DACHTemplate />
-            ) : layout === "european" ? (
-              <EuropeanTemplate />
+            {layout === "newyork" ? (
+              <NewYorkTemplate />
+            ) : layout === "vienna" ? (
+              <ViennaTemplate />
+            ) : layout === "paris" ? (
+              <ParisTemplate />
+            ) : layout === "tokyo" ? (
+              <TokyoTemplate />
+            ) : layout === "berlin" ? (
+              <BerlinTemplate />
             ) : (
-              <ClassicTemplate />
+              <LondonTemplate />
             )}
           </A4Page>
           </div>

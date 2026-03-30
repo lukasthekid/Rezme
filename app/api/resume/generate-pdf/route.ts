@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 type RequestBody = {
   resumeData: ResumeData;
-  layout?: "modern" | "classic" | "dach" | "european";
+  layout?: "newyork" | "london" | "vienna" | "paris" | "tokyo" | "berlin";
 };
 
 async function getHeadshotBase64FromSession(): Promise<string | null> {
@@ -21,8 +21,8 @@ async function getHeadshotBase64FromSession(): Promise<string | null> {
   return Buffer.from(user.headshot).toString("base64");
 }
 
-function generateModernResumeHTML(resumeData: ResumeData): string {
-  const { personal, education, workExperience, projects, skills } = resumeData;
+function generateNewYorkResumeHTML(resumeData: ResumeData): string {
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
 
   // Helper to format URLs for display (strip protocol, www, trailing slashes)
   const formatUrl = (url: string): string => {
@@ -402,6 +402,32 @@ function generateModernResumeHTML(resumeData: ResumeData): string {
                 `).join("")}
               </section>
             ` : ""}
+
+            <!-- EXTRACURRICULAR ACTIVITIES -->
+            ${extracurriculars && extracurriculars.length > 0 ? `
+              <section>
+                <h2>EXTRACURRICULAR ACTIVITIES</h2>
+                ${extracurriculars.map(extra => `
+                  <div class="exp-entry">
+                    <div class="exp-header">
+                      <div class="exp-left">
+                        <div class="exp-title">${extra.activity || ""}</div>
+                      </div>
+                      ${(extra.startDate || extra.endDate) ? `
+                        <div class="exp-right">
+                          ${extra.startDate || ""} – ${extra.endDate || ""}
+                        </div>
+                      ` : ""}
+                    </div>
+                    ${extra.description && extra.description.length > 0 ? `
+                      <ul class="exp-achievements">
+                        ${extra.description.map(d => `<li>${d}</li>`).join("")}
+                      </ul>
+                    ` : ""}
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
           </div>
         </div>
       </body>
@@ -409,8 +435,8 @@ function generateModernResumeHTML(resumeData: ResumeData): string {
   `;
 }
 
-function generateClassicResumeHTML(resumeData: ResumeData): string {
-  const { personal, education, workExperience, projects, skills } = resumeData;
+function generateLondonResumeHTML(resumeData: ResumeData): string {
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
 
   // Helper to format URLs for display
   const formatUrl = (url: string): string => {
@@ -790,6 +816,32 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
             </section>
           ` : ""}
 
+          <!-- EXTRACURRICULAR ACTIVITIES -->
+          ${extracurriculars && extracurriculars.length > 0 ? `
+            <section>
+              <h2>EXTRACURRICULAR ACTIVITIES</h2>
+              ${extracurriculars.map(extra => `
+                <div class="exp-entry">
+                  <div class="exp-header">
+                    <div class="exp-left">
+                      <div class="exp-title">${extra.activity || ""}</div>
+                    </div>
+                    ${(extra.startDate || extra.endDate) ? `
+                      <div class="exp-right">
+                        ${extra.startDate || ""} – ${extra.endDate || ""}
+                      </div>
+                    ` : ""}
+                  </div>
+                  ${extra.description && extra.description.length > 0 ? `
+                    <ul class="exp-achievements">
+                      ${extra.description.map(d => `<li>${d}</li>`).join("")}
+                    </ul>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </section>
+          ` : ""}
+
           <!-- TECHNICAL SKILLS -->
           ${skills && skills.length > 0 ? `
             <section>
@@ -811,24 +863,22 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
   `;
 }
 
-const DACH_PURPLE = "#7c3aed";
-
-function generateDACHResumeHTML(
+function generateViennaResumeHTML(
   resumeData: ResumeData,
   headshotBase64?: string | null
 ): string {
-  const { personal, education, workExperience, projects, skills } = resumeData;
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
 
   const formatUrl = (url: string): string => {
     if (!url) return "";
     return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
   };
 
-  const currentRole = workExperience?.[0]?.title || "";
+  const SIDEBAR_BG = "#2d3748";
 
   const headshotImg = headshotBase64
-    ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" class="dach-headshot-img" />`
-    : "";
+    ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" style="width:100%;height:100%;object-fit:cover;" />`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:6pt;color:#94a3b8;">Photo</div>`;
 
   return `
     <!DOCTYPE html>
@@ -842,163 +892,144 @@ function generateDACHResumeHTML(
             width: 210mm;
             min-height: 297mm;
             margin: 0;
-            padding: 8mm 10mm;
+            padding: 0;
             font-family: Arial, Helvetica, sans-serif;
             font-size: 9pt;
             line-height: 1.3;
             color: #111827;
             background: white;
           }
-          .dach-header { display: flex; align-items: center; gap: 1.2em; margin-bottom: 1em; }
-          .dach-headshot-wrap { position: relative; flex-shrink: 0; }
-          .dach-headshot-shape {
-            position: absolute;
-            left: -2px;
-            top: -2px;
-            width: 92px;
-            height: 92px;
-            background: ${DACH_PURPLE};
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 0);
-          }
-          .dach-headshot-box {
-            position: relative;
-            margin-left: 10px;
-            margin-top: 10px;
-            width: 72px;
-            height: 72px;
-            overflow: hidden;
-            border: 2px solid white;
-            border-radius: 2px;
-            background: #e2e8f0;
-          }
-          .dach-headshot-img { width: 100%; height: 100%; object-fit: cover; }
-          .dach-header-text {
-            flex: 1;
-            min-width: 0;
+          .vn-layout { display: flex; min-height: 297mm; }
+          .vn-sidebar {
+            width: 38%;
+            flex-shrink: 0;
+            background: ${SIDEBAR_BG};
+            padding: 9mm 6mm 10mm 10mm;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 84px;
+            gap: 5mm;
           }
-          .dach-header-text-inner { text-align: left; }
-          .dach-role { font-size: 7pt; color: #64748b; margin-bottom: 0.2em; }
-          .dach-name { font-size: 14pt; font-weight: 700; color: #111827; margin-bottom: 0.4em; }
-          .dach-contact { font-size: 7pt; color: #374151; display: flex; flex-direction: column; gap: 0.2em; }
-          .dach-contact span { display: flex; align-items: center; gap: 0.4em; }
-          .dach-contact .dach-icon { width: 10px; height: 10px; flex-shrink: 0; display: inline-block; vertical-align: middle; }
-          .dach-contact .dach-icon svg { width: 100%; height: 100%; stroke: ${DACH_PURPLE}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-          .dach-grid { display: grid; grid-template-columns: 65% 35%; gap: 1em; }
-          .dach-main { padding-right: 0.5em; }
-          .dach-sidebar { padding-left: 0.3em; }
-          .dach-h2 {
-            font-size: 7pt;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            border-bottom: 2px solid ${DACH_PURPLE};
-            padding-bottom: 0.15em;
-            margin-bottom: 0.6em;
-            color: #111827;
-          }
-          .dach-exp-row { display: flex; gap: 0.6em; margin-bottom: 0.7em; }
-          .dach-exp-dates { width: 4.5em; flex-shrink: 0; font-size: 7pt; color: #64748b; }
-          .dach-exp-content { flex: 1; min-width: 0; }
-          .dach-exp-title { font-weight: 700; font-size: 9pt; color: #111827; }
-          .dach-exp-company { font-size: 8pt; color: #64748b; }
-          .dach-exp-ul { margin-top: 0.3em; padding-left: 1em; list-style-type: disc; }
-          .dach-exp-ul li { margin-bottom: 0.15em; font-size: 8pt; color: #374151; line-height: 1.35; }
-          .dach-edu-row { display: flex; gap: 0.6em; margin-bottom: 0.7em; }
-          .dach-edu-dates { width: 4.5em; flex-shrink: 0; font-size: 7pt; color: #64748b; }
-          .dach-edu-content { flex: 1; min-width: 0; }
-          .dach-edu-inst { font-weight: 700; font-size: 9pt; color: #111827; }
-          .dach-edu-degree { font-size: 8pt; font-style: italic; color: #374151; }
-          .dach-edu-ul { margin-top: 0.3em; padding-left: 1em; list-style-type: disc; }
-          .dach-edu-ul li { margin-bottom: 0.15em; font-size: 8pt; color: #374151; }
-          .dach-project { margin-bottom: 0.6em; }
-          .dach-project-name { font-weight: 600; font-size: 9pt; color: #111827; }
-          .dach-project-role { font-size: 8pt; font-style: italic; color: #64748b; }
-          .dach-project-url { font-size: 7pt; color: #2563eb; margin-top: 0.15em; }
-          .dach-project-ul { margin-top: 0.25em; padding-left: 1em; list-style-type: disc; }
-          .dach-project-ul li { margin-bottom: 0.1em; font-size: 8pt; color: #374151; }
-          .dach-skill-ul { list-style: none; padding: 0; margin: 0; }
-          .dach-skill-ul li {
+          .vn-main {
+            flex: 1;
+            padding: 9mm 10mm 10mm 8mm;
             display: flex;
-            align-items: center;
-            gap: 0.4em;
-            margin-bottom: 0.25em;
-            font-size: 8pt;
-            color: #374151;
+            flex-direction: column;
+            gap: 5mm;
           }
-          .dach-skill-ul li::before {
-            content: "";
-            width: 4px;
-            height: 4px;
+          .vn-headshot-wrap { display: flex; flex-direction: column; align-items: center; gap: 3mm; }
+          .vn-headshot {
+            width: 22mm; height: 22mm;
             border-radius: 50%;
-            background: ${DACH_PURPLE};
+            overflow: hidden;
+            border: 1.5px solid #4a5568;
+            background: #4a5568;
             flex-shrink: 0;
           }
-          section { margin-bottom: 1em; }
+          .vn-name { font-size: 11pt; font-weight: 700; color: white; text-align: center; }
+          .vn-contact { display: flex; flex-direction: column; gap: 1.5mm; width: 100%; }
+          .vn-contact-row { display: flex; align-items: center; gap: 1.5mm; font-size: 7pt; color: #cbd5e0; }
+          .vn-contact-icon { width: 8px; height: 8px; flex-shrink: 0; }
+          .vn-contact-icon svg { width: 100%; height: 100%; stroke: #94a3b8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+          .vn-sh2 {
+            font-size: 6pt; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: #94a3b8;
+            border-bottom: 1px solid #4a5568;
+            padding-bottom: 0.8mm; margin-bottom: 2mm;
+          }
+          .vn-edu-item { margin-bottom: 2.5mm; }
+          .vn-edu-inst { font-weight: 700; font-size: 8pt; color: white; line-height: 1.3; }
+          .vn-edu-degree { font-size: 7.5pt; font-style: italic; color: #cbd5e0; line-height: 1.3; }
+          .vn-edu-dates { font-size: 7pt; color: #94a3b8; }
+          .vn-edu-ul { padding-left: 2.5mm; list-style: disc; margin-top: 1mm; }
+          .vn-edu-ul li { font-size: 7pt; color: #cbd5e0; line-height: 1.3; margin-bottom: 0.3mm; }
+          .vn-skill-item { margin-bottom: 1.5mm; }
+          .vn-skill-cat { font-weight: 600; font-size: 7.5pt; color: #e2e8f0; }
+          .vn-skill-items { font-size: 7pt; color: #94a3b8; }
+          .vn-mh2 {
+            font-size: 6pt; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: #111827;
+            border-bottom: 2px solid #4a5568;
+            padding-bottom: 0.8mm; margin-bottom: 2.5mm;
+          }
+          .vn-exp-row { display: flex; gap: 3mm; margin-bottom: 3mm; }
+          .vn-exp-dates { width: 14mm; flex-shrink: 0; font-size: 6.5pt; color: #6b7280; }
+          .vn-exp-content { flex: 1; min-width: 0; }
+          .vn-exp-title { font-weight: 700; font-size: 8.5pt; color: #111827; }
+          .vn-exp-co { font-size: 7.5pt; color: #6b7280; margin-top: 0.3mm; }
+          .vn-exp-ul { padding-left: 3mm; list-style: disc; margin-top: 1mm; }
+          .vn-exp-ul li { font-size: 7.5pt; color: #374151; line-height: 1.35; margin-bottom: 0.3mm; }
+          .vn-proj-item { margin-bottom: 2.5mm; }
+          .vn-proj-name { font-weight: 600; font-size: 8.5pt; color: #111827; }
+          .vn-proj-role { font-size: 7.5pt; font-style: italic; color: #6b7280; }
+          .vn-proj-url { font-size: 7pt; color: #2563eb; margin-top: 0.5mm; }
+          .vn-proj-ul { padding-left: 3mm; list-style: disc; margin-top: 1mm; }
+          .vn-proj-ul li { font-size: 7.5pt; color: #374151; line-height: 1.35; margin-bottom: 0.3mm; }
+          section { }
           strong, b { font-weight: 600; }
           em, i { font-style: italic; }
           u { text-decoration: underline; }
         </style>
       </head>
       <body>
-        <header class="dach-header">
-          <div class="dach-headshot-wrap">
-            <div class="dach-headshot-shape" aria-hidden="true"></div>
-            <div class="dach-headshot-box">
-              ${headshotImg || '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#94a3b8;">Foto</div>'}
+        <div class="vn-layout">
+          <!-- LEFT SIDEBAR -->
+          <aside class="vn-sidebar">
+            <div class="vn-headshot-wrap">
+              <div class="vn-headshot">${headshotImg}</div>
+              <div class="vn-name">${personal?.name || "YOUR NAME"}</div>
+              <div class="vn-contact">
+                ${personal?.phone ? `<div class="vn-contact-row"><span class="vn-contact-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span> ${personal.phone}</div>` : ""}
+                ${personal?.email ? `<div class="vn-contact-row"><span class="vn-contact-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span> ${personal.email}</div>` : ""}
+                ${personal?.location ? `<div class="vn-contact-row"><span class="vn-contact-icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span> ${personal.location}</div>` : ""}
+                ${personal?.linkedin ? `<div class="vn-contact-row"><span class="vn-contact-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span> ${formatUrl(personal.linkedin)}</div>` : ""}
+              </div>
             </div>
-          </div>
-          <div class="dach-header-text">
-            <div class="dach-header-text-inner">
-            ${currentRole ? `<div class="dach-role">${currentRole}</div>` : ""}
-            <h1 class="dach-name">${personal?.name || "YOUR NAME"}</h1>
-            <div class="dach-contact">
-              ${personal?.phone ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span> ${personal.phone}</span>` : ""}
-              ${personal?.email ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span> ${personal.email}</span>` : ""}
-              ${personal?.location ? `<span><span class="dach-icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span> ${personal.location}</span>` : ""}
-            </div>
-            </div>
-          </div>
-        </header>
 
-        <div class="dach-grid">
-          <div class="dach-main">
-            ${workExperience && workExperience.length > 0 ? `
+            ${education && education.length > 0 ? `
               <section>
-                <h2 class="dach-h2">Berufserfahrung</h2>
-                ${workExperience.map((exp) => `
-                  <div class="dach-exp-row">
-                    <div class="dach-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
-                    <div class="dach-exp-content">
-                      <div class="dach-exp-title">${exp.title || ""}</div>
-                      <div class="dach-exp-company">${exp.company || ""}</div>
-                      ${exp.achievements && exp.achievements.length > 0 ? `
-                        <ul class="dach-exp-ul">
-                          ${exp.achievements.map((a) => `<li>${a}</li>`).join("")}
-                        </ul>
-                      ` : ""}
-                    </div>
+                <div class="vn-sh2">Education</div>
+                ${education.map(edu => `
+                  <div class="vn-edu-item">
+                    <div class="vn-edu-inst">${edu.institution || ""}</div>
+                    ${edu.degree ? `<div class="vn-edu-degree">${edu.degree}</div>` : ""}
+                    <div class="vn-edu-dates">${edu.startDate || ""} – ${edu.endDate || ""}</div>
+                    ${edu.highlights && edu.highlights.length > 0 ? `
+                      <ul class="vn-edu-ul">
+                        ${edu.highlights.map(h => `<li>${h}</li>`).join("")}
+                      </ul>
+                    ` : ""}
                   </div>
                 `).join("")}
               </section>
             ` : ""}
 
-            ${education && education.length > 0 ? `
+            ${skills && skills.length > 0 ? `
               <section>
-                <h2 class="dach-h2">Ausbildung</h2>
-                ${education.map((edu) => `
-                  <div class="dach-edu-row">
-                    <div class="dach-edu-dates">${edu.startDate || ""} – ${edu.endDate || ""}</div>
-                    <div class="dach-edu-content">
-                      <div class="dach-edu-inst">${edu.institution || ""}</div>
-                      ${edu.degree ? `<div class="dach-edu-degree">${edu.degree}</div>` : ""}
-                      ${edu.highlights && edu.highlights.length > 0 ? `
-                        <ul class="dach-edu-ul">
-                          ${edu.highlights.map((h) => `<li>${h}</li>`).join("")}
+                <div class="vn-sh2">Skills</div>
+                ${skills.map(({ category, items }) => `
+                  <div class="vn-skill-item">
+                    <div class="vn-skill-cat">${category}:</div>
+                    <div class="vn-skill-items">${items}</div>
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
+          </aside>
+
+          <!-- RIGHT COLUMN -->
+          <main class="vn-main">
+            ${workExperience && workExperience.length > 0 ? `
+              <section>
+                <div class="vn-mh2">Experience</div>
+                ${workExperience.map(exp => `
+                  <div class="vn-exp-row">
+                    <div class="vn-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
+                    <div class="vn-exp-content">
+                      <div class="vn-exp-title">${exp.title || ""}</div>
+                      <div class="vn-exp-co">${exp.company || ""}${exp.company && exp.location ? " · " : ""}${exp.location || ""}</div>
+                      ${exp.achievements && exp.achievements.length > 0 ? `
+                        <ul class="vn-exp-ul">
+                          ${exp.achievements.map(a => `<li>${a}</li>`).join("")}
                         </ul>
                       ` : ""}
                     </div>
@@ -1009,37 +1040,41 @@ function generateDACHResumeHTML(
 
             ${projects && projects.length > 0 ? `
               <section>
-                <h2 class="dach-h2">Projekte</h2>
-                ${projects.map((p) => `
-                  <div class="dach-project">
-                    <div class="dach-project-name">${p.name || ""}</div>
-                    ${p.role ? `<div class="dach-project-role">${p.role}</div>` : ""}
-                    ${p.url ? `<div class="dach-project-url">${formatUrl(p.url)}</div>` : ""}
+                <div class="vn-mh2">Projects</div>
+                ${projects.map(p => `
+                  <div class="vn-proj-item">
+                    <div class="vn-proj-name">${p.name || ""}</div>
+                    ${p.role ? `<div class="vn-proj-role">${p.role}</div>` : ""}
+                    ${p.url ? `<div class="vn-proj-url">${formatUrl(p.url)}</div>` : ""}
                     ${p.description && p.description.length > 0 ? `
-                      <ul class="dach-project-ul">
-                        ${p.description.map((d) => `<li>${d}</li>`).join("")}
+                      <ul class="vn-proj-ul">
+                        ${p.description.map(d => `<li>${d}</li>`).join("")}
                       </ul>
                     ` : ""}
                   </div>
                 `).join("")}
               </section>
             ` : ""}
-          </div>
 
-          <aside class="dach-sidebar">
-            ${skills && skills.length > 0 ? `
+            ${extracurriculars && extracurriculars.length > 0 ? `
               <section>
-                <h2 class="dach-h2">Kenntnisse</h2>
-                <div class="dach-skill-list">
-                  ${skills.map(({ category, items }) => `
-                    <div class="dach-skill-entry">
-                      <strong>${category}:</strong> ${items}
+                <div class="vn-mh2">Extracurricular Activities</div>
+                ${extracurriculars.map(extra => `
+                  <div class="vn-exp-row">
+                    <div class="vn-exp-dates">${extra.startDate || ""} – ${extra.endDate || ""}</div>
+                    <div class="vn-exp-content">
+                      <div class="vn-exp-title">${extra.activity || ""}</div>
+                      ${extra.description && extra.description.length > 0 ? `
+                        <ul class="vn-exp-ul">
+                          ${extra.description.map(d => `<li>${d}</li>`).join("")}
+                        </ul>
+                      ` : ""}
                     </div>
-                  `).join("")}
-                </div>
+                  </div>
+                `).join("")}
               </section>
             ` : ""}
-          </aside>
+          </main>
         </div>
       </body>
     </html>
@@ -1048,11 +1083,11 @@ function generateDACHResumeHTML(
 
 const EU_ACCENT = "#1e293b";
 
-function generateEuropeanResumeHTML(
+function generateParisResumeHTML(
   resumeData: ResumeData,
   headshotBase64?: string | null
 ): string {
-  const { personal, education, workExperience, projects, skills } = resumeData;
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
 
   const formatUrl = (url: string): string => {
     if (!url) return "";
@@ -1212,28 +1247,6 @@ function generateEuropeanResumeHTML(
                 </div>
               </section>
             ` : ""}
-          </aside>
-
-          <main class="eu-main">
-            ${workExperience && workExperience.length > 0 ? `
-              <section>
-                <h2 class="eu-h2">Work experience</h2>
-                ${workExperience.map((exp) => `
-                  <div class="eu-exp-row">
-                    <div class="eu-exp-content">
-                      <div class="eu-exp-title">${exp.title || ""}</div>
-                      <div class="eu-exp-company">${exp.company || ""}</div>
-                      ${exp.achievements && exp.achievements.length > 0 ? `
-                        <ul class="eu-exp-ul">
-                          ${exp.achievements.map((a) => `<li>${a}</li>`).join("")}
-                        </ul>
-                      ` : ""}
-                    </div>
-                    <div class="eu-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
-                  </div>
-                `).join("")}
-              </section>
-            ` : ""}
 
             ${education && education.length > 0 ? `
               <section>
@@ -1250,6 +1263,28 @@ function generateEuropeanResumeHTML(
                       ` : ""}
                     </div>
                     <div class="eu-edu-dates">${edu.startDate || ""} – ${edu.endDate || ""}</div>
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
+          </aside>
+
+          <main class="eu-main">
+            ${workExperience && workExperience.length > 0 ? `
+              <section>
+                <h2 class="eu-h2">Work Experience</h2>
+                ${workExperience.map((exp) => `
+                  <div class="eu-exp-row">
+                    <div class="eu-exp-content">
+                      <div class="eu-exp-title">${exp.title || ""}</div>
+                      <div class="eu-exp-company">${exp.company || ""}</div>
+                      ${exp.achievements && exp.achievements.length > 0 ? `
+                        <ul class="eu-exp-ul">
+                          ${exp.achievements.map((a) => `<li>${a}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                    <div class="eu-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
                   </div>
                 `).join("")}
               </section>
@@ -1272,7 +1307,490 @@ function generateEuropeanResumeHTML(
                 `).join("")}
               </section>
             ` : ""}
+
+            ${extracurriculars && extracurriculars.length > 0 ? `
+              <section>
+                <h2 class="eu-h2">Extracurricular Activities</h2>
+                ${extracurriculars.map((extra) => `
+                  <div class="eu-exp-row">
+                    <div class="eu-exp-content">
+                      <div class="eu-exp-title">${extra.activity || ""}</div>
+                      ${extra.description && extra.description.length > 0 ? `
+                        <ul class="eu-exp-ul">
+                          ${extra.description.map((d) => `<li>${d}</li>`).join("")}
+                        </ul>
+                      ` : ""}
+                    </div>
+                    ${(extra.startDate || extra.endDate) ? `
+                      <div class="eu-exp-dates">${extra.startDate || ""} – ${extra.endDate || ""}</div>
+                    ` : ""}
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
           </main>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+function generateTokyoResumeHTML(resumeData: ResumeData): string {
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
+
+  const formatUrl = (url: string): string => {
+    if (!url) return "";
+    return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+  };
+
+  const contactParts = [
+    personal?.location,
+    personal?.phone,
+    personal?.email,
+    personal?.linkedin ? formatUrl(personal.linkedin) : null,
+    personal?.github ? formatUrl(personal.github) : null,
+  ].filter(Boolean) as string[];
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          @page { size: A4; margin: 0; }
+          body {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0;
+            padding: 8mm 10mm;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 9pt;
+            line-height: 1.35;
+            color: #1e293b;
+            background: white;
+          }
+          .tk-header { text-align: center; padding-bottom: 4mm; }
+          .tk-name { font-size: 22pt; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
+          .tk-role { font-size: 9pt; font-style: italic; color: #64748b; margin-top: 1mm; }
+          .tk-contact { font-size: 7.5pt; color: #475569; margin-top: 1.5mm; }
+          .tk-hr { border: 0; border-top: 1px solid #cbd5e1; margin: 0; }
+          .tk-section { display: grid; grid-template-columns: 20% 80%; }
+          .tk-label {
+            font-size: 7pt;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: #64748b;
+            padding-top: 3.5mm;
+            padding-right: 3mm;
+            line-height: 1.6;
+          }
+          .tk-content { padding: 3.5mm 0 3mm 0; }
+          .tk-exp { margin-bottom: 3mm; }
+          .tk-exp-header { display: flex; justify-content: space-between; align-items: baseline; }
+          .tk-exp-left { flex: 1; }
+          .tk-exp-title { font-weight: 700; font-size: 9.5pt; color: #0f172a; }
+          .tk-exp-company { font-size: 8.5pt; font-style: italic; color: #475569; }
+          .tk-exp-right { text-align: right; flex-shrink: 0; margin-left: 4mm; }
+          .tk-exp-dates { font-size: 7.5pt; color: #64748b; }
+          .tk-exp-loc { font-size: 7pt; color: #94a3b8; }
+          .tk-exp-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .tk-exp-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .tk-edu { margin-bottom: 3mm; }
+          .tk-edu-header { display: flex; justify-content: space-between; align-items: baseline; }
+          .tk-edu-inst { font-weight: 700; font-size: 9.5pt; color: #0f172a; }
+          .tk-edu-degree { font-size: 8.5pt; font-style: italic; color: #475569; }
+          .tk-edu-right { text-align: right; flex-shrink: 0; margin-left: 4mm; }
+          .tk-edu-dates { font-size: 7.5pt; color: #64748b; }
+          .tk-edu-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .tk-edu-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .tk-proj { margin-bottom: 2.5mm; }
+          .tk-proj-name { font-weight: 700; font-size: 9.5pt; color: #0f172a; }
+          .tk-proj-role { font-size: 8.5pt; font-style: italic; color: #475569; }
+          .tk-proj-url { font-size: 7.5pt; color: #2563eb; }
+          .tk-proj-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .tk-proj-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .tk-skill { margin-bottom: 1.5mm; font-size: 8.5pt; }
+          .tk-skill strong { font-weight: 700; color: #0f172a; }
+          .tk-skill span { color: #475569; }
+          .tk-extra { margin-bottom: 2.5mm; }
+          .tk-extra-header { display: flex; justify-content: space-between; align-items: baseline; }
+          .tk-extra-name { font-weight: 700; font-size: 9.5pt; color: #0f172a; }
+          .tk-extra-dates { font-size: 7.5pt; color: #64748b; text-align: right; flex-shrink: 0; margin-left: 4mm; }
+          .tk-extra-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .tk-extra-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          strong, b { font-weight: 700; }
+          em, i { font-style: italic; }
+          u { text-decoration: underline; }
+        </style>
+      </head>
+      <body>
+        <!-- HEADER -->
+        <div class="tk-header">
+          <div class="tk-name">${personal?.name || "YOUR NAME"}</div>
+          ${workExperience?.[0]?.title ? `<div class="tk-role">${workExperience[0].title}</div>` : ""}
+          <div class="tk-contact">${contactParts.join(" · ")}</div>
+        </div>
+        <hr class="tk-hr">
+
+        <!-- EMPLOYMENT HISTORY -->
+        ${workExperience && workExperience.length > 0 ? `
+          <div class="tk-section">
+            <div class="tk-label">Employment<br>History</div>
+            <div class="tk-content">
+              ${workExperience.map(exp => `
+                <div class="tk-exp">
+                  <div class="tk-exp-header">
+                    <div class="tk-exp-left">
+                      <div class="tk-exp-title">${exp.title || ""}</div>
+                      <div class="tk-exp-company">${exp.company || ""}</div>
+                    </div>
+                    <div class="tk-exp-right">
+                      <div class="tk-exp-dates">${exp.startDate || ""} – ${exp.endDate || "Present"}</div>
+                      ${exp.location ? `<div class="tk-exp-loc">${exp.location}</div>` : ""}
+                    </div>
+                  </div>
+                  ${exp.achievements && exp.achievements.length > 0 ? `
+                    <ul class="tk-exp-ul">
+                      ${exp.achievements.map(a => `<li>${a}</li>`).join("")}
+                    </ul>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <hr class="tk-hr">
+        ` : ""}
+
+        <!-- EDUCATION -->
+        ${education && education.length > 0 ? `
+          <div class="tk-section">
+            <div class="tk-label">Education</div>
+            <div class="tk-content">
+              ${education.map(edu => `
+                <div class="tk-edu">
+                  <div class="tk-edu-header">
+                    <div>
+                      <div class="tk-edu-inst">${edu.institution || ""}</div>
+                      ${edu.degree ? `<div class="tk-edu-degree">${edu.degree}</div>` : ""}
+                    </div>
+                    <div class="tk-edu-right">
+                      <div class="tk-edu-dates">${edu.startDate || ""} – ${edu.endDate || ""}</div>
+                    </div>
+                  </div>
+                  ${edu.highlights && edu.highlights.length > 0 ? `
+                    <ul class="tk-edu-ul">
+                      ${edu.highlights.map(h => `<li>${h}</li>`).join("")}
+                    </ul>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <hr class="tk-hr">
+        ` : ""}
+
+        <!-- PROJECTS -->
+        ${projects && projects.length > 0 ? `
+          <div class="tk-section">
+            <div class="tk-label">Projects</div>
+            <div class="tk-content">
+              ${projects.map(p => `
+                <div class="tk-proj">
+                  <div class="tk-proj-name">${p.name || ""}</div>
+                  ${p.role ? `<div class="tk-proj-role">${p.role}</div>` : ""}
+                  ${p.url ? `<div class="tk-proj-url">${formatUrl(p.url)}</div>` : ""}
+                  ${p.description && p.description.length > 0 ? `
+                    <ul class="tk-proj-ul">
+                      ${p.description.map(d => `<li>${d}</li>`).join("")}
+                    </ul>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <hr class="tk-hr">
+        ` : ""}
+
+        <!-- SKILLS -->
+        ${skills && skills.length > 0 ? `
+          <div class="tk-section">
+            <div class="tk-label">Skills</div>
+            <div class="tk-content">
+              ${skills.map(({ category, items }) => {
+                if (!category && !items) return "";
+                return `<div class="tk-skill"><strong>${category}</strong><span> — ${items}</span></div>`;
+              }).join("")}
+            </div>
+          </div>
+          <hr class="tk-hr">
+        ` : ""}
+
+        <!-- EXTRACURRICULAR ACTIVITIES -->
+        ${extracurriculars && extracurriculars.length > 0 ? `
+          <div class="tk-section">
+            <div class="tk-label">Extra&shy;curricular Activities</div>
+            <div class="tk-content">
+              ${extracurriculars.map(extra => `
+                <div class="tk-extra">
+                  <div class="tk-extra-header">
+                    <div class="tk-extra-name">${extra.activity || ""}</div>
+                    ${(extra.startDate || extra.endDate) ? `
+                      <div class="tk-extra-dates">${extra.startDate || ""} – ${extra.endDate || ""}</div>
+                    ` : ""}
+                  </div>
+                  ${extra.description && extra.description.length > 0 ? `
+                    <ul class="tk-extra-ul">
+                      ${extra.description.map(d => `<li>${d}</li>`).join("")}
+                    </ul>
+                  ` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+      </body>
+    </html>
+  `;
+}
+
+function generateBerlinResumeHTML(
+  resumeData: ResumeData,
+  headshotBase64?: string | null
+): string {
+  const { personal, education, workExperience, projects, skills, extracurriculars } = resumeData;
+
+  const formatUrl = (url: string): string => {
+    if (!url) return "";
+    return url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+  };
+
+  const ACCENT = "#0f172a";
+
+  const headshotImg = headshotBase64
+    ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" style="width:100%;height:100%;object-fit:cover;" />`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11pt;font-weight:700;color:#475569;">${
+        personal?.name ? personal.name.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase() : "?"
+      }</div>`;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          @page { size: A4; margin: 0; }
+          body {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0;
+            padding: 8mm 10mm;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9pt;
+            line-height: 1.35;
+            color: #1e293b;
+            background: white;
+          }
+          .bl-header { text-align: center; padding-bottom: 4mm; border-bottom: 1px solid #e2e8f0; }
+          .bl-headshot {
+            width: 18mm; height: 18mm;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid ${ACCENT};
+            background: #e2e8f0;
+            margin: 0 auto 2.5mm auto;
+          }
+          .bl-name { font-size: 16pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: ${ACCENT}; }
+          .bl-contact { font-size: 7.5pt; color: #475569; margin-top: 1mm; }
+          .bl-grid { display: grid; grid-template-columns: 28% 72%; gap: 5mm; margin-top: 4mm; }
+          .bl-sidebar { border-right: 1px solid #e2e8f0; padding-right: 4mm; }
+          .bl-main { padding-left: 1mm; }
+          .bl-sh {
+            font-size: 6.5pt; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.14em; color: ${ACCENT};
+            border-bottom: 1px solid ${ACCENT};
+            padding-bottom: 1px; margin-bottom: 2mm;
+          }
+          .bl-section { margin-bottom: 4mm; }
+          .bl-detail-group { margin-bottom: 1.5mm; }
+          .bl-detail-label { font-size: 6pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; }
+          .bl-detail-val { font-size: 8pt; color: #334155; }
+          .bl-skill-item { font-size: 8pt; color: #334155; padding-bottom: 1mm; border-bottom: 1px solid #e2e8f0; margin-bottom: 1.5mm; }
+          .bl-skill-cat { font-weight: 700; color: ${ACCENT}; }
+          .bl-exp { margin-bottom: 2.5mm; }
+          .bl-exp-diamond { font-size: 9pt; color: #94a3b8; margin-right: 1.5mm; }
+          .bl-exp-row { display: flex; align-items: flex-start; }
+          .bl-exp-body { flex: 1; }
+          .bl-exp-title { font-weight: 700; font-size: 9pt; color: ${ACCENT}; }
+          .bl-exp-company { font-size: 8pt; color: #475569; }
+          .bl-exp-meta { font-size: 7pt; color: #94a3b8; margin-top: 0.5mm; }
+          .bl-exp-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .bl-exp-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .bl-edu { margin-bottom: 2.5mm; }
+          .bl-edu-title { font-weight: 700; font-size: 9pt; color: ${ACCENT}; }
+          .bl-edu-degree { font-size: 8pt; font-style: italic; color: #475569; }
+          .bl-edu-meta { font-size: 7pt; color: #94a3b8; margin-top: 0.5mm; }
+          .bl-edu-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .bl-edu-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .bl-proj { margin-bottom: 2.5mm; }
+          .bl-proj-title { font-weight: 700; font-size: 9pt; color: ${ACCENT}; }
+          .bl-proj-role { font-size: 8pt; font-style: italic; color: #475569; }
+          .bl-proj-url { font-size: 7.5pt; color: #2563eb; }
+          .bl-proj-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .bl-proj-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          .bl-extra { margin-bottom: 2.5mm; }
+          .bl-extra-row { display: flex; align-items: flex-start; }
+          .bl-extra-title { font-weight: 700; font-size: 9pt; color: ${ACCENT}; }
+          .bl-extra-meta { font-size: 7pt; color: #94a3b8; margin-top: 0.5mm; }
+          .bl-extra-ul { margin-top: 1mm; padding-left: 3.5mm; list-style-type: disc; }
+          .bl-extra-ul li { font-size: 8pt; color: #334155; line-height: 1.4; margin-bottom: 0.5mm; }
+          strong, b { font-weight: 700; }
+          em, i { font-style: italic; }
+          u { text-decoration: underline; }
+        </style>
+      </head>
+      <body>
+        <!-- HEADER -->
+        <div class="bl-header">
+          <div class="bl-headshot">${headshotImg}</div>
+          <div class="bl-name">${personal?.name || "FULL NAME"}</div>
+          <div class="bl-contact">
+            ${[
+              workExperience?.[0]?.title ? `<em>${workExperience[0].title}</em>` : null,
+              personal?.location,
+              personal?.phone,
+              personal?.email,
+            ].filter(Boolean).join(" · ")}
+          </div>
+        </div>
+
+        <!-- TWO-COLUMN BODY -->
+        <div class="bl-grid">
+          <!-- LEFT SIDEBAR -->
+          <div class="bl-sidebar">
+            <!-- DETAILS -->
+            <div class="bl-section">
+              <div class="bl-sh">Details</div>
+              ${personal?.location ? `<div class="bl-detail-group"><div class="bl-detail-label">Location</div><div class="bl-detail-val">${personal.location}</div></div>` : ""}
+              ${personal?.phone ? `<div class="bl-detail-group"><div class="bl-detail-label">Phone</div><div class="bl-detail-val">${personal.phone}</div></div>` : ""}
+              ${personal?.email ? `<div class="bl-detail-group"><div class="bl-detail-label">Email</div><div class="bl-detail-val">${personal.email}</div></div>` : ""}
+              ${personal?.linkedin ? `<div class="bl-detail-group"><div class="bl-detail-label">LinkedIn</div><div class="bl-detail-val">${formatUrl(personal.linkedin)}</div></div>` : ""}
+              ${personal?.github ? `<div class="bl-detail-group"><div class="bl-detail-label">GitHub</div><div class="bl-detail-val">${formatUrl(personal.github)}</div></div>` : ""}
+            </div>
+
+            <!-- SKILLS -->
+            ${skills && skills.length > 0 ? `
+              <div class="bl-section">
+                <div class="bl-sh">Skills</div>
+                ${skills.map(({ category, items }) => `
+                  <div class="bl-skill-item">
+                    <div class="bl-skill-cat">${category}</div>
+                    <div>${items}</div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+          </div>
+
+          <!-- RIGHT MAIN -->
+          <div class="bl-main">
+            <!-- EMPLOYMENT HISTORY -->
+            ${workExperience && workExperience.length > 0 ? `
+              <div class="bl-section">
+                <div class="bl-sh">Employment History</div>
+                ${workExperience.map(exp => `
+                  <div class="bl-exp">
+                    <div class="bl-exp-row">
+                      <span class="bl-exp-diamond">◇</span>
+                      <div class="bl-exp-body">
+                        <div class="bl-exp-title">${exp.title || ""}</div>
+                        <div class="bl-exp-company">${exp.company || ""}</div>
+                        <div class="bl-exp-meta">${exp.startDate || ""} – ${exp.endDate || "Present"}${exp.location ? ` · ${exp.location}` : ""}</div>
+                        ${exp.achievements && exp.achievements.length > 0 ? `
+                          <ul class="bl-exp-ul">
+                            ${exp.achievements.map(a => `<li>${a}</li>`).join("")}
+                          </ul>
+                        ` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+
+            <!-- EDUCATION -->
+            ${education && education.length > 0 ? `
+              <div class="bl-section">
+                <div class="bl-sh">Education</div>
+                ${education.map(edu => `
+                  <div class="bl-edu">
+                    <div class="bl-exp-row">
+                      <span class="bl-exp-diamond">◇</span>
+                      <div class="bl-exp-body">
+                        <div class="bl-edu-title">${edu.institution || ""}</div>
+                        ${edu.degree ? `<div class="bl-edu-degree">${edu.degree}</div>` : ""}
+                        <div class="bl-edu-meta">${edu.startDate || ""} – ${edu.endDate || ""}</div>
+                        ${edu.highlights && edu.highlights.length > 0 ? `
+                          <ul class="bl-edu-ul">
+                            ${edu.highlights.map(h => `<li>${h}</li>`).join("")}
+                          </ul>
+                        ` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+
+            <!-- PROJECTS -->
+            ${projects && projects.length > 0 ? `
+              <div class="bl-section">
+                <div class="bl-sh">Projects</div>
+                ${projects.map(p => `
+                  <div class="bl-proj">
+                    <div class="bl-exp-row">
+                      <span class="bl-exp-diamond">◇</span>
+                      <div class="bl-exp-body">
+                        <div class="bl-proj-title">${p.name || ""}</div>
+                        ${p.role ? `<div class="bl-proj-role">${p.role}</div>` : ""}
+                        ${p.url ? `<div class="bl-proj-url">${formatUrl(p.url)}</div>` : ""}
+                        ${p.description && p.description.length > 0 ? `
+                          <ul class="bl-proj-ul">
+                            ${p.description.map(d => `<li>${d}</li>`).join("")}
+                          </ul>
+                        ` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+
+            <!-- EXTRACURRICULAR ACTIVITIES -->
+            ${extracurriculars && extracurriculars.length > 0 ? `
+              <div class="bl-section">
+                <div class="bl-sh">Extracurricular Activities</div>
+                ${extracurriculars.map(extra => `
+                  <div class="bl-extra">
+                    <div class="bl-extra-row">
+                      <span class="bl-exp-diamond">◇</span>
+                      <div class="bl-exp-body">
+                        <div class="bl-extra-title">${extra.activity || ""}</div>
+                        ${(extra.startDate || extra.endDate) ? `<div class="bl-extra-meta">${extra.startDate || ""} – ${extra.endDate || ""}</div>` : ""}
+                        ${extra.description && extra.description.length > 0 ? `
+                          <ul class="bl-extra-ul">
+                            ${extra.description.map(d => `<li>${d}</li>`).join("")}
+                          </ul>
+                        ` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            ` : ""}
+          </div>
         </div>
       </body>
     </html>
@@ -1282,7 +1800,7 @@ function generateEuropeanResumeHTML(
 export async function POST(req: NextRequest) {
   try {
     const body: RequestBody = await req.json();
-    const { resumeData, layout = "modern" } = body;
+    const { resumeData, layout = "newyork" } = body;
 
     if (!resumeData) {
       return NextResponse.json(
@@ -1292,16 +1810,21 @@ export async function POST(req: NextRequest) {
     }
 
     let html: string;
-    if (layout === "dach") {
+    if (layout === "vienna") {
       const headshotBase64 = await getHeadshotBase64FromSession();
-      html = generateDACHResumeHTML(resumeData, headshotBase64);
-    } else if (layout === "european") {
+      html = generateViennaResumeHTML(resumeData, headshotBase64);
+    } else if (layout === "paris") {
       const headshotBase64 = await getHeadshotBase64FromSession();
-      html = generateEuropeanResumeHTML(resumeData, headshotBase64);
-    } else if (layout === "classic") {
-      html = generateClassicResumeHTML(resumeData);
+      html = generateParisResumeHTML(resumeData, headshotBase64);
+    } else if (layout === "berlin") {
+      const headshotBase64 = await getHeadshotBase64FromSession();
+      html = generateBerlinResumeHTML(resumeData, headshotBase64);
+    } else if (layout === "tokyo") {
+      html = generateTokyoResumeHTML(resumeData);
+    } else if (layout === "london") {
+      html = generateLondonResumeHTML(resumeData);
     } else {
-      html = generateModernResumeHTML(resumeData);
+      html = generateNewYorkResumeHTML(resumeData);
     }
 
     // Launch Puppeteer with appropriate settings

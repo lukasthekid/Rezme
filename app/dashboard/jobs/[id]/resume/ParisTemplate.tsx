@@ -14,15 +14,20 @@ import { LinkIcon, Phone, Mail, MapPin } from "lucide-react";
 const ACCENT = "#1e293b";
 
 /**
- * EuropeanTemplate — international European-style CV with headshot (top-right),
- * navy/slate accents, English section labels, sidebar skills and dates on the right.
+ * ParisTemplate — European-style CV with headshot (top-right), navy/slate accents.
+ *
+ * Layout:
+ * - Full-width header: name, contact (left) + headshot (right)
+ * - Left sidebar (~32%): Skills, Education
+ * - Right main (~68%): Work Experience, Projects, Extracurricular Activities
  */
-export function EuropeanTemplate() {
+export function ParisTemplate() {
   const personal = useResumeStore((state) => state.resumeData.personal);
   const education = useResumeStore((state) => state.resumeData.education);
   const workExperience = useResumeStore((state) => state.resumeData.workExperience);
   const projects = useResumeStore((state) => state.resumeData.projects);
   const skills = useResumeStore((state) => state.resumeData.skills);
+  const extracurriculars = useResumeStore((state) => state.resumeData.extracurriculars);
 
   const updatePersonal = useResumeStore((state) => state.updatePersonal);
   const updateEducation = useResumeStore((state) => state.updateEducation);
@@ -33,6 +38,10 @@ export function EuropeanTemplate() {
   );
   const updateProject = useResumeStore((state) => state.updateProject);
   const updateProjectDescription = useResumeStore((state) => state.updateProjectDescription);
+  const updateExtracurricular = useResumeStore((state) => state.updateExtracurricular);
+  const updateExtracurricularDescription = useResumeStore(
+    (state) => state.updateExtracurricularDescription
+  );
   const addWorkExperienceAchievement = useResumeStore(
     (state) => state.addWorkExperienceAchievement
   );
@@ -43,12 +52,20 @@ export function EuropeanTemplate() {
   const removeEducationHighlight = useResumeStore((state) => state.removeEducationHighlight);
   const addProjectDescription = useResumeStore((state) => state.addProjectDescription);
   const removeProjectDescription = useResumeStore((state) => state.removeProjectDescription);
+  const addExtracurricularDescription = useResumeStore(
+    (state) => state.addExtracurricularDescription
+  );
+  const removeExtracurricularDescription = useResumeStore(
+    (state) => state.removeExtracurricularDescription
+  );
   const addWorkExperience = useResumeStore((state) => state.addWorkExperience);
   const removeWorkExperience = useResumeStore((state) => state.removeWorkExperience);
   const addEducation = useResumeStore((state) => state.addEducation);
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const addExtracurricular = useResumeStore((state) => state.addExtracurricular);
+  const removeExtracurricular = useResumeStore((state) => state.removeExtracurricular);
   const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
   const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
   const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
@@ -59,7 +76,11 @@ export function EuropeanTemplate() {
 
   return (
     <div className="h-full pt-0">
-      <header className="relative mb-5 flex flex-row items-start justify-between gap-4 border-b pb-4" style={{ borderColor: ACCENT }}>
+      {/* HEADER */}
+      <header
+        className="relative mb-5 flex flex-row items-start justify-between gap-4 border-b pb-4"
+        style={{ borderColor: ACCENT }}
+      >
         <div className="min-w-0 flex-1">
           {currentRole && (
             <div className="mb-0.5">
@@ -164,6 +185,7 @@ export function EuropeanTemplate() {
           </div>
         </div>
 
+        {/* Headshot */}
         <div className="relative h-[7.5rem] w-[7.5rem] flex-shrink-0 overflow-hidden rounded-sm border border-slate-300 bg-slate-200 shadow-sm print:border-slate-300">
           {!headshotError ? (
             <img
@@ -180,8 +202,11 @@ export function EuropeanTemplate() {
         </div>
       </header>
 
+      {/* TWO-COLUMN BODY */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,32%)_minmax(0,68%)] lg:gap-8">
+        {/* LEFT SIDEBAR: Skills + Education */}
         <aside className="space-y-4 lg:order-1">
+          {/* SKILLS */}
           <section>
             <h2
               className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
@@ -195,31 +220,97 @@ export function EuropeanTemplate() {
                   <div>
                     <EditableField
                       value={skill.category}
-                      onChange={(value) => updateSkillCategory(idx, 'category', value)}
+                      onChange={(value) => updateSkillCategory(idx, "category", value)}
                       placeholder="Category"
                       className="font-semibold text-slate-900 text-xs"
                     />
                     <EditableField
                       value={skill.items}
-                      onChange={(value) => updateSkillCategory(idx, 'items', value)}
+                      onChange={(value) => updateSkillCategory(idx, "items", value)}
                       placeholder="e.g. Python, TypeScript, Go"
                       className="text-slate-700 text-xs"
                     />
                   </div>
                 </EditableSectionItem>
               ))}
-              <AddSectionButton onClick={() => addSkillCategory('', '')} label="skill category" />
+              <AddSectionButton onClick={() => addSkillCategory("", "")} label="skill category" />
+            </div>
+          </section>
+
+          {/* EDUCATION */}
+          <section>
+            <h2
+              className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
+              style={{ borderColor: ACCENT }}
+            >
+              Education
+            </h2>
+            <div className="space-y-4">
+              {(education || []).map((edu, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeEducation(idx)}>
+                  <div className="flex flex-col gap-1">
+                    <div className="min-w-0">
+                      <EditableField
+                        value={edu.institution}
+                        onChange={(v) => updateEducation(idx, "institution", v)}
+                        placeholder="Institution"
+                        className="font-bold text-xs text-slate-900"
+                      />
+                      <EditableField
+                        value={edu.degree}
+                        onChange={(v) => updateEducation(idx, "degree", v)}
+                        placeholder="Degree"
+                        className="text-xs italic text-slate-700"
+                        multiline
+                      />
+                      <ul className="mt-1.5 space-y-1">
+                        {(edu.highlights || []).map((highlight, hIdx) => (
+                          <EditableListItem
+                            key={hIdx}
+                            content={highlight}
+                            onChange={(html) => updateEducationHighlight(idx, hIdx, html)}
+                            onRemove={() => removeEducationHighlight(idx, hIdx)}
+                            placeholder="Highlight..."
+                          />
+                        ))}
+                        <AddListItemButton
+                          onClick={() => addEducationHighlight(idx, "")}
+                          label="highlight"
+                        />
+                      </ul>
+                    </div>
+                    <div className="text-left text-[10px] text-slate-600">
+                      <EditableField
+                        value={edu.startDate}
+                        onChange={(v) => updateEducation(idx, "startDate", v)}
+                        placeholder="Start"
+                        className="inline text-[10px]"
+                      />
+                      <span className="px-0.5">–</span>
+                      <EditableField
+                        value={edu.endDate}
+                        onChange={(v) => updateEducation(idx, "endDate", v)}
+                        placeholder="End"
+                        className="inline text-[10px]"
+                      />
+                    </div>
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addEducation()} label="education" />
             </div>
           </section>
         </aside>
 
+        {/* RIGHT MAIN: Work Experience, Projects, Extracurriculars */}
         <main className="space-y-4 lg:order-2">
+          {/* WORK EXPERIENCE */}
           <section>
             <h2
               className="mb-3 border-b-2 pb-1 text-xs font-bold uppercase tracking-widest text-slate-900"
               style={{ borderColor: ACCENT }}
             >
-              Work experience
+              Work Experience
             </h2>
             <div className="space-y-4">
               {(workExperience || []).map((exp, idx) => (
@@ -243,9 +334,7 @@ export function EuropeanTemplate() {
                           <EditableListItem
                             key={aIdx}
                             content={achievement}
-                            onChange={(html) =>
-                              updateWorkExperienceAchievement(idx, aIdx, html)
-                            }
+                            onChange={(html) => updateWorkExperienceAchievement(idx, aIdx, html)}
                             onRemove={() => removeWorkExperienceAchievement(idx, aIdx)}
                             placeholder="Achievement..."
                           />
@@ -278,69 +367,7 @@ export function EuropeanTemplate() {
             </div>
           </section>
 
-          <section>
-            <h2
-              className="mb-3 border-b-2 pb-1 text-xs font-bold uppercase tracking-widest text-slate-900"
-              style={{ borderColor: ACCENT }}
-            >
-              Education
-            </h2>
-            <div className="space-y-4">
-              {(education || []).map((edu, idx) => (
-                <EditableSectionItem key={idx} onRemove={() => removeEducation(idx)}>
-                  <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                    <div className="min-w-0 flex-1">
-                      <EditableField
-                        value={edu.institution}
-                        onChange={(v) => updateEducation(idx, "institution", v)}
-                        placeholder="Institution"
-                        className="font-bold text-xs text-slate-900"
-                      />
-                      <EditableField
-                        value={edu.degree}
-                        onChange={(v) => updateEducation(idx, "degree", v)}
-                        placeholder="Degree"
-                        className="text-xs italic text-slate-700"
-                        multiline
-                      />
-                      <ul className="mt-1.5 space-y-1">
-                        {(edu.highlights || []).map((highlight, hIdx) => (
-                          <EditableListItem
-                            key={hIdx}
-                            content={highlight}
-                            onChange={(html) => updateEducationHighlight(idx, hIdx, html)}
-                            onRemove={() => removeEducationHighlight(idx, hIdx)}
-                            placeholder="Highlight..."
-                          />
-                        ))}
-                        <AddListItemButton
-                          onClick={() => addEducationHighlight(idx, "")}
-                          label="highlight"
-                        />
-                      </ul>
-                    </div>
-                    <div className="w-full flex-shrink-0 text-left text-[10px] text-slate-600 sm:w-24 sm:text-right">
-                      <EditableField
-                        value={edu.startDate}
-                        onChange={(v) => updateEducation(idx, "startDate", v)}
-                        placeholder="Start"
-                        className="inline text-[10px] sm:block"
-                      />
-                      <span className="px-0.5 sm:hidden">–</span>
-                      <EditableField
-                        value={edu.endDate}
-                        onChange={(v) => updateEducation(idx, "endDate", v)}
-                        placeholder="End"
-                        className="inline text-[10px] sm:block"
-                      />
-                    </div>
-                  </div>
-                </EditableSectionItem>
-              ))}
-              <AddSectionButton onClick={() => addEducation()} label="education" />
-            </div>
-          </section>
-
+          {/* PROJECTS */}
           <section>
             <h2
               className="mb-3 border-b-2 pb-1 text-xs font-bold uppercase tracking-widest text-slate-900"
@@ -392,6 +419,63 @@ export function EuropeanTemplate() {
                 </EditableSectionItem>
               ))}
               <AddSectionButton onClick={() => addProject()} label="project" />
+            </div>
+          </section>
+
+          {/* EXTRACURRICULAR ACTIVITIES */}
+          <section>
+            <h2
+              className="mb-3 border-b-2 pb-1 text-xs font-bold uppercase tracking-widest text-slate-900"
+              style={{ borderColor: ACCENT }}
+            >
+              Extracurricular Activities
+            </h2>
+            <div className="space-y-3">
+              {(extracurriculars || []).map((extra, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeExtracurricular(idx)}>
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                    <div className="min-w-0 flex-1">
+                      <EditableField
+                        value={extra.activity}
+                        onChange={(v) => updateExtracurricular(idx, "activity", v)}
+                        placeholder="Activity name"
+                        className="font-semibold text-xs text-slate-900"
+                      />
+                      <ul className="mt-1 space-y-0.5">
+                        {(extra.description || []).map((desc, dIdx) => (
+                          <EditableListItem
+                            key={dIdx}
+                            content={desc}
+                            onChange={(html) => updateExtracurricularDescription(idx, dIdx, html)}
+                            onRemove={() => removeExtracurricularDescription(idx, dIdx)}
+                            placeholder="Describe the activity..."
+                          />
+                        ))}
+                        <AddListItemButton
+                          onClick={() => addExtracurricularDescription(idx, "")}
+                          label="description"
+                        />
+                      </ul>
+                    </div>
+                    <div className="w-full flex-shrink-0 text-left text-[10px] text-slate-600 sm:w-24 sm:text-right">
+                      <EditableField
+                        value={extra.startDate}
+                        onChange={(v) => updateExtracurricular(idx, "startDate", v)}
+                        placeholder="Start"
+                        className="inline text-[10px] sm:block"
+                      />
+                      <span className="px-0.5 sm:hidden">–</span>
+                      <EditableField
+                        value={extra.endDate}
+                        onChange={(v) => updateExtracurricular(idx, "endDate", v)}
+                        placeholder="End"
+                        className="inline text-[10px] sm:block"
+                      />
+                    </div>
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addExtracurricular()} label="activity" />
             </div>
           </section>
         </main>

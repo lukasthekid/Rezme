@@ -10,26 +10,20 @@ import {
 import { useResumeStore } from '@/store';
 
 /**
- * ClassicTemplate (Tech Template) - A professional single-column resume layout
- * 
+ * LondonTemplate (Single Column) — clean single-column résumé layout.
+ *
  * Layout:
- * - Single-column format with vertical flow
- * - Header with name (large, bold) and centered contact info
- * - Four sections: Education, Experience, Projects, Technical Skills
- * - Split-line alignment: left for titles/names, right for dates/locations
- * - Bold, capitalized section headings with horizontal lines
- * - Bullet points for Experience and Projects
- * - Technical Skills categorized at the bottom
+ * - Centered header with name and contact
+ * - Education, Experience, Projects, Extracurricular Activities, Technical Skills
  */
-export function ClassicTemplate() {
-  // Subscribe to store
+export function LondonTemplate() {
   const personal = useResumeStore((state) => state.resumeData.personal);
   const education = useResumeStore((state) => state.resumeData.education);
   const workExperience = useResumeStore((state) => state.resumeData.workExperience);
   const projects = useResumeStore((state) => state.resumeData.projects);
   const skills = useResumeStore((state) => state.resumeData.skills);
+  const extracurriculars = useResumeStore((state) => state.resumeData.extracurriculars);
 
-  // Get actions
   const updatePersonal = useResumeStore((state) => state.updatePersonal);
   const updateEducation = useResumeStore((state) => state.updateEducation);
   const updateEducationHighlight = useResumeStore((state) => state.updateEducationHighlight);
@@ -39,6 +33,10 @@ export function ClassicTemplate() {
   );
   const updateProject = useResumeStore((state) => state.updateProject);
   const updateProjectDescription = useResumeStore((state) => state.updateProjectDescription);
+  const updateExtracurricular = useResumeStore((state) => state.updateExtracurricular);
+  const updateExtracurricularDescription = useResumeStore(
+    (state) => state.updateExtracurricularDescription
+  );
   const addWorkExperienceAchievement = useResumeStore((state) => state.addWorkExperienceAchievement);
   const removeWorkExperienceAchievement = useResumeStore(
     (state) => state.removeWorkExperienceAchievement
@@ -47,17 +45,24 @@ export function ClassicTemplate() {
   const removeEducationHighlight = useResumeStore((state) => state.removeEducationHighlight);
   const addProjectDescription = useResumeStore((state) => state.addProjectDescription);
   const removeProjectDescription = useResumeStore((state) => state.removeProjectDescription);
+  const addExtracurricularDescription = useResumeStore(
+    (state) => state.addExtracurricularDescription
+  );
+  const removeExtracurricularDescription = useResumeStore(
+    (state) => state.removeExtracurricularDescription
+  );
   const addWorkExperience = useResumeStore((state) => state.addWorkExperience);
   const removeWorkExperience = useResumeStore((state) => state.removeWorkExperience);
   const addEducation = useResumeStore((state) => state.addEducation);
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const addExtracurricular = useResumeStore((state) => state.addExtracurricular);
+  const removeExtracurricular = useResumeStore((state) => state.removeExtracurricular);
   const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
   const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
   const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
-  // Helper function to format URLs for display
   const formatUrl = (url: string): string => {
     if (!url) return '';
     return url
@@ -68,9 +73,8 @@ export function ClassicTemplate() {
 
   return (
     <div className="h-full pt-2">
-      {/* HEADER - Centered Name and Contact */}
+      {/* HEADER */}
       <header className="mb-6 text-center">
-        {/* Name - Large and Bold */}
         <div className="mb-2">
           <EditableField
             value={personal?.name}
@@ -79,8 +83,6 @@ export function ClassicTemplate() {
             className="text-3xl font-bold text-gray-900"
           />
         </div>
-
-        {/* Contact Info - Centered and Editable */}
         <div className="text-xs text-gray-700">
           <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1">
             {personal?.phone && (
@@ -111,26 +113,27 @@ export function ClassicTemplate() {
               <div className="flex items-center gap-x-2">
                 <EditableField
                   value={formatUrl(personal.linkedin)}
-                  onChange={(value) => updatePersonal('linkedin', value.startsWith('http') ? value : `https://${value}`)}
+                  onChange={(value) =>
+                    updatePersonal('linkedin', value.startsWith('http') ? value : `https://${value}`)
+                  }
                   placeholder="linkedin.com/in/profile"
                   className="text-xs"
                 />
-                {personal?.github && (
-                  <span className="text-gray-400">•</span>
-                )}
+                {personal?.github && <span className="text-gray-400">•</span>}
               </div>
             )}
             {personal?.github && (
               <div className="flex items-center gap-x-2">
                 <EditableField
                   value={formatUrl(personal.github)}
-                  onChange={(value) => updatePersonal('github', value.startsWith('http') ? value : `https://${value}`)}
+                  onChange={(value) =>
+                    updatePersonal('github', value.startsWith('http') ? value : `https://${value}`)
+                  }
                   placeholder="github.com/username"
                   className="text-xs"
                 />
               </div>
             )}
-            {/* Show placeholders if no contact info */}
             {!personal?.phone && !personal?.email && !personal?.linkedin && !personal?.github && (
               <div className="flex items-center gap-x-2 text-gray-400">
                 <EditableField
@@ -152,7 +155,6 @@ export function ClassicTemplate() {
         </div>
       </header>
 
-      {/* SINGLE COLUMN CONTENT */}
       <div className="space-y-5">
         {/* EDUCATION */}
         <section>
@@ -217,10 +219,7 @@ export function ClassicTemplate() {
                         placeholder="Highlight..."
                       />
                     ))}
-                    <AddListItemButton
-                      onClick={() => addEducationHighlight(idx, '')}
-                      label="highlight"
-                    />
+                    <AddListItemButton onClick={() => addEducationHighlight(idx, '')} label="highlight" />
                   </ul>
                 </div>
               </EditableSectionItem>
@@ -285,17 +284,12 @@ export function ClassicTemplate() {
                       <EditableListItem
                         key={aIdx}
                         content={achievement}
-                        onChange={(html) =>
-                          updateWorkExperienceAchievement(idx, aIdx, html)
-                        }
+                        onChange={(html) => updateWorkExperienceAchievement(idx, aIdx, html)}
                         onRemove={() => removeWorkExperienceAchievement(idx, aIdx)}
                         placeholder="Describe your achievement with impact and metrics..."
                       />
                     ))}
-                    <AddListItemButton
-                      onClick={() => addWorkExperienceAchievement(idx, '')}
-                      label="achievement"
-                    />
+                    <AddListItemButton onClick={() => addWorkExperienceAchievement(idx, '')} label="achievement" />
                   </ul>
                 </div>
               </EditableSectionItem>
@@ -358,15 +352,70 @@ export function ClassicTemplate() {
                         placeholder="Describe the project and your contributions..."
                       />
                     ))}
+                    <AddListItemButton onClick={() => addProjectDescription(idx, '')} label="description" />
+                  </ul>
+                </div>
+              </EditableSectionItem>
+            ))}
+            <AddSectionButton onClick={() => addProject()} label="project" />
+          </div>
+        </section>
+
+        {/* EXTRACURRICULAR ACTIVITIES */}
+        <section>
+          <h2 className="text-xs font-bold uppercase tracking-wide border-b border-gray-800 pb-1 mb-3 text-gray-900">
+            Extracurricular Activities
+          </h2>
+          <div className="space-y-4">
+            {(extracurriculars || []).map((extra, idx) => (
+              <EditableSectionItem key={idx} onRemove={() => removeExtracurricular(idx)}>
+                <div>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <div className="flex-1">
+                      <EditableField
+                        value={extra.activity}
+                        onChange={(v) => updateExtracurricular(idx, 'activity', v)}
+                        placeholder="Activity Name"
+                        className="font-semibold text-sm text-gray-900"
+                      />
+                    </div>
+                    <div className="text-right text-xs text-gray-600 ml-4 w-32">
+                      <div className="flex items-center gap-1 justify-end">
+                        <EditableField
+                          value={extra.startDate}
+                          onChange={(v) => updateExtracurricular(idx, 'startDate', v)}
+                          placeholder="Start"
+                          className="text-xs text-right"
+                        />
+                        <span>–</span>
+                        <EditableField
+                          value={extra.endDate}
+                          onChange={(v) => updateExtracurricular(idx, 'endDate', v)}
+                          placeholder="End"
+                          className="text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="mt-2 space-y-1 ml-4">
+                    {(extra.description || []).map((desc, dIdx) => (
+                      <EditableListItem
+                        key={dIdx}
+                        content={desc}
+                        onChange={(html) => updateExtracurricularDescription(idx, dIdx, html)}
+                        onRemove={() => removeExtracurricularDescription(idx, dIdx)}
+                        placeholder="Describe the activity..."
+                      />
+                    ))}
                     <AddListItemButton
-                      onClick={() => addProjectDescription(idx, '')}
+                      onClick={() => addExtracurricularDescription(idx, '')}
                       label="description"
                     />
                   </ul>
                 </div>
               </EditableSectionItem>
             ))}
-            <AddSectionButton onClick={() => addProject()} label="project" />
+            <AddSectionButton onClick={() => addExtracurricular()} label="activity" />
           </div>
         </section>
 

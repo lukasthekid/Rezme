@@ -6,6 +6,7 @@ interface EditableFieldProps {
   value: string | undefined;
   onChange: (value: string) => void;
   className?: string;
+  style?: React.CSSProperties;
   placeholder?: string;
   multiline?: boolean;
   disabled?: boolean;
@@ -27,6 +28,7 @@ export function EditableField({
   value,
   onChange,
   className = '',
+  style,
   placeholder = '',
   multiline = false,
   disabled = false,
@@ -87,6 +89,7 @@ export function EditableField({
         style={{
           overflow: 'hidden',
           minHeight: '1.2em',
+          ...style,
         }}
       />
     );
@@ -102,6 +105,7 @@ export function EditableField({
       placeholder={placeholder}
       disabled={disabled}
       className={baseClassName}
+      style={style}
     />
   );
 }
