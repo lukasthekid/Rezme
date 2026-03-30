@@ -239,16 +239,17 @@ export interface ResumeProject {
 }
 
 /**
- * Skills section of a resume
- * Supports categorized skills (e.g., programmingLanguages, technologies, tools)
- * and allows for custom categories via index signature
+ * A single skill category with a comma-separated items string
  */
-export interface ResumeSkills {
-  programmingLanguages?: string[];
-  technologies?: string[];
-  tools?: string[];
-  [key: string]: string[] | undefined;
+export interface ResumeSkillCategory {
+  category: string;
+  items: string;
 }
+
+/**
+ * Skills section of a resume — ordered array of skill categories
+ */
+export type ResumeSkills = ResumeSkillCategory[];
 
 /**
  * Extracurricular activity entry in a resume

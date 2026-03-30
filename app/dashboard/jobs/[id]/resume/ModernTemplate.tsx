@@ -52,6 +52,9 @@ export function ModernTemplate() {
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
+  const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
+  const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
   // Helper function to format URLs for display
   const formatUrl = (url: string): string => {
@@ -232,32 +235,32 @@ export function ModernTemplate() {
           </section>
 
           {/* SKILLS */}
-          {skills && Object.keys(skills).length > 0 && (
-            <section>
-              <h2 className="text-xs font-bold uppercase tracking-widest border-b-2 border-gray-800 pb-1 mb-3 text-gray-900">
-                Skills
-              </h2>
-              <div className="space-y-2 text-xs">
-                {Object.entries(skills).map(([category, items]) => {
-                  if (!items || items.length === 0) return null;
-
-                  const formattedCategory = category
-                    .replace(/([A-Z])/g, ' $1')
-                    .replace(/^./, (str) => str.toUpperCase())
-                    .trim();
-
-                  return (
-                    <div key={category}>
-                      <span className="font-semibold text-gray-900">
-                        {formattedCategory}:
-                      </span>{' '}
-                      <span className="text-gray-700">{items.join(', ')}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+          <section>
+            <h2 className="text-xs font-bold uppercase tracking-widest border-b-2 border-gray-800 pb-1 mb-3 text-gray-900">
+              Skills
+            </h2>
+            <div className="space-y-2 text-xs">
+              {(skills || []).map((skill, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeSkillCategory(idx)}>
+                  <div>
+                    <EditableField
+                      value={skill.category}
+                      onChange={(value) => updateSkillCategory(idx, 'category', value)}
+                      placeholder="Category"
+                      className="font-semibold text-gray-900 text-xs"
+                    />
+                    <EditableField
+                      value={skill.items}
+                      onChange={(value) => updateSkillCategory(idx, 'items', value)}
+                      placeholder="e.g. Python, TypeScript, Go"
+                      className="text-gray-700 text-xs"
+                    />
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addSkillCategory('', '')} label="skill category" />
+            </div>
+          </section>
         </aside>
 
         {/* RIGHT COLUMN - Experience & Projects */}

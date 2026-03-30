@@ -6,6 +6,7 @@ import type {
   ResumeEducation,
   ResumeWorkExperience,
   ResumeProject,
+  ResumeSkillCategory,
   ResumeSkills,
   ResumeExtracurricular,
 } from '@/types/resume';
@@ -79,10 +80,10 @@ interface ResumeActions {
   removeProjectDescription: (projectIndex: number, descriptionIndex: number) => void;
 
   // Skills updates
-  updateSkills: (category: string, value: string[]) => void;
-  addSkillCategory: (category: string, skills: string[]) => void;
-  removeSkillCategory: (category: string) => void;
-  setSkills: (skills: ResumeSkills) => void;
+  updateSkillCategory: (index: number, field: 'category' | 'items', value: string) => void;
+  addSkillCategory: (category: string, items: string) => void;
+  removeSkillCategory: (index: number) => void;
+  setSkills: (skills: ResumeSkillCategory[]) => void;
 
   // Extracurriculars updates
   updateExtracurricular: (
@@ -107,6 +108,25 @@ interface ResumeActions {
 type ResumeStore = ResumeState & ResumeActions;
 
 /**
+ * Normalizes the skills field to always be a ResumeSkillCategory array.
+ * Handles legacy data stored as an object (e.g. { programmingLanguages: [...] })
+ * by converting each key-value pair into { category, items }.
+ */
+function normalizeSkills(skills: unknown): ResumeSkillCategory[] {
+  if (!skills) return [];
+  if (Array.isArray(skills)) return skills as ResumeSkillCategory[];
+  if (typeof skills === 'object') {
+    return Object.entries(skills as Record<string, unknown>)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([category, v]) => ({
+        category,
+        items: Array.isArray(v) ? (v as string[]).join(', ') : String(v),
+      }));
+  }
+  return [];
+}
+
+/**
  * Initial empty resume data
  */
 const initialResumeData: ResumeData = {
@@ -122,11 +142,7 @@ const initialResumeData: ResumeData = {
   education: [],
   workExperience: [],
   projects: [],
-  skills: {
-    programmingLanguages: [],
-    technologies: [],
-    tools: [],
-  },
+  skills: [],
   extracurriculars: [],
 };
 
@@ -150,7 +166,10 @@ export const useResumeStore = create<ResumeStore>()(
       setResumeData: (data: ResumeData) =>
         set(
           {
-            resumeData: data,
+            resumeData: {
+              ...data,
+              skills: normalizeSkills(data.skills),
+            },
             isInitialized: true,
           },
           false,
@@ -591,52 +610,44 @@ export const useResumeStore = create<ResumeStore>()(
       // SKILLS
       // ============================================================
 
-      updateSkills: (category: string, value: string[]) =>
-        set(
-          (state) => ({
-            resumeData: {
-              ...state.resumeData,
-              skills: {
-                ...state.resumeData.skills,
-                [category]: value,
-              },
-            },
-          }),
-          false,
-          `updateSkills/${category}`
-        ),
-
-      addSkillCategory: (category: string, skills: string[]) =>
-        set(
-          (state) => ({
-            resumeData: {
-              ...state.resumeData,
-              skills: {
-                ...state.resumeData.skills,
-                [category]: skills,
-              },
-            },
-          }),
-          false,
-          `addSkillCategory/${category}`
-        ),
-
-      removeSkillCategory: (category: string) =>
+      updateSkillCategory: (index: number, field: 'category' | 'items', value: string) =>
         set(
           (state) => {
-            const { [category]: _, ...remainingSkills } = state.resumeData.skills || {};
-            return {
-              resumeData: {
-                ...state.resumeData,
-                skills: remainingSkills,
-              },
-            };
+            const skills = [...(state.resumeData.skills || [])];
+            if (skills[index]) {
+              skills[index] = { ...skills[index], [field]: value };
+            }
+            return { resumeData: { ...state.resumeData, skills } };
           },
           false,
-          `removeSkillCategory/${category}`
+          `updateSkillCategory/${index}/${field}`
         ),
 
-      setSkills: (skills: ResumeSkills) =>
+      addSkillCategory: (category: string, items: string) =>
+        set(
+          (state) => ({
+            resumeData: {
+              ...state.resumeData,
+              skills: [...(state.resumeData.skills || []), { category, items }],
+            },
+          }),
+          false,
+          'addSkillCategory'
+        ),
+
+      removeSkillCategory: (index: number) =>
+        set(
+          (state) => ({
+            resumeData: {
+              ...state.resumeData,
+              skills: (state.resumeData.skills || []).filter((_, i) => i !== index),
+            },
+          }),
+          false,
+          `removeSkillCategory/${index}`
+        ),
+
+      setSkills: (skills: ResumeSkillCategory[]) =>
         set(
           (state) => ({
             resumeData: {
@@ -819,5 +830,5 @@ export const useResumeActions = () =>
     updatePersonal: state.updatePersonal,
     updateWorkExperience: state.updateWorkExperience,
     updateEducation: state.updateEducation,
-    updateSkills: state.updateSkills,
+    updateSkillCategory: state.updateSkillCategory,
   }));

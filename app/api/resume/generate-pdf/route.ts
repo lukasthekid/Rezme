@@ -336,21 +336,15 @@ function generateModernResumeHTML(resumeData: ResumeData): string {
             ` : ""}
 
             <!-- SKILLS -->
-            ${skills && Object.keys(skills).length > 0 ? `
+            ${skills && skills.length > 0 ? `
               <section>
                 <h2>SKILLS</h2>
-                ${Object.entries(skills).map(([category, items]) => {
-                  if (!items || items.length === 0) return "";
-                  
-                  const formattedCategory = category
-                    .replace(/([A-Z])/g, ' $1')
-                    .replace(/^./, str => str.toUpperCase())
-                    .trim();
-                  
+                ${skills.map(({ category, items }) => {
+                  if (!category && !items) return "";
                   return `
                     <div class="skills-entry">
-                      <strong>${formattedCategory}:</strong>
-                      <span> ${items.join(", ")}</span>
+                      <strong>${category}:</strong>
+                      <span> ${items}</span>
                     </div>
                   `;
                 }).join("")}
@@ -435,11 +429,6 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
   if (personal?.github) contactItems.push(formatUrl(personal.github));
   const contactLine = contactItems.join(' • ');
 
-  // Map skills to categories
-  const languages = skills?.programmingLanguages || [];
-  const tools = skills?.tools || [];
-  const technologies = skills?.technologies || [];
-  const frameworksAndLibraries = technologies;
 
   return `
     <!DOCTYPE html>
@@ -802,42 +791,15 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
           ` : ""}
 
           <!-- TECHNICAL SKILLS -->
-          ${(languages.length > 0 || frameworksAndLibraries.length > 0 || tools.length > 0) ? `
+          ${skills && skills.length > 0 ? `
             <section>
               <h2>TECHNICAL SKILLS</h2>
-              ${languages.length > 0 ? `
-                <div class="skills-entry">
-                  <strong>Languages:</strong>
-                  <span> ${languages.join(", ")}</span>
-                </div>
-              ` : ""}
-              ${frameworksAndLibraries.length > 0 ? `
-                <div class="skills-entry">
-                  <strong>Frameworks:</strong>
-                  <span> ${frameworksAndLibraries.join(", ")}</span>
-                </div>
-              ` : ""}
-              ${tools.length > 0 ? `
-                <div class="skills-entry">
-                  <strong>Developer Tools:</strong>
-                  <span> ${tools.join(", ")}</span>
-                </div>
-              ` : ""}
-              ${skills && Object.entries(skills).map(([category, items]) => {
-                if (!items || items.length === 0) return "";
-                if (['programmingLanguages', 'technologies', 'tools'].includes(category)) {
-                  return "";
-                }
-                
-                const formattedCategory = category
-                  .replace(/([A-Z])/g, ' $1')
-                  .replace(/^./, str => str.toUpperCase())
-                  .trim();
-                
+              ${skills.map(({ category, items }) => {
+                if (!category && !items) return "";
                 return `
                   <div class="skills-entry">
-                    <strong>${formattedCategory}:</strong>
-                    <span> ${items.join(", ")}</span>
+                    <strong>${category}:</strong>
+                    <span> ${items}</span>
                   </div>
                 `;
               }).join("")}
@@ -850,7 +812,6 @@ function generateClassicResumeHTML(resumeData: ResumeData): string {
 }
 
 const DACH_PURPLE = "#7c3aed";
-const DACH_EXCLUDE_SKILLS = ["spokenLanguages", "hobbies"];
 
 function generateDACHResumeHTML(
   resumeData: ResumeData,
@@ -864,13 +825,6 @@ function generateDACHResumeHTML(
   };
 
   const currentRole = workExperience?.[0]?.title || "";
-  const mainSkills = skills
-    ? Object.entries(skills).filter(
-        ([cat]) => !DACH_EXCLUDE_SKILLS.includes(cat) && skills[cat]?.length
-      )
-    : [];
-  const spokenLanguages = skills?.spokenLanguages || [];
-  const hobbies = skills?.hobbies || [];
 
   const headshotImg = headshotBase64
     ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" class="dach-headshot-img" />`
@@ -1073,30 +1027,16 @@ function generateDACHResumeHTML(
           </div>
 
           <aside class="dach-sidebar">
-            ${mainSkills.length > 0 ? `
+            ${skills && skills.length > 0 ? `
               <section>
                 <h2 class="dach-h2">Kenntnisse</h2>
-                <ul class="dach-skill-ul">
-                  ${mainSkills.flatMap(([, items]) => (items || []).map((item) => `<li>${item}</li>`)).join("")}
-                </ul>
-              </section>
-            ` : ""}
-
-            ${spokenLanguages.length > 0 ? `
-              <section>
-                <h2 class="dach-h2">Sprachen</h2>
-                <ul class="dach-skill-ul">
-                  ${spokenLanguages.map((l) => `<li>${l}</li>`).join("")}
-                </ul>
-              </section>
-            ` : ""}
-
-            ${hobbies.length > 0 ? `
-              <section>
-                <h2 class="dach-h2">Hobbys & Interessen</h2>
-                <ul class="dach-skill-ul">
-                  ${hobbies.map((h) => `<li>${h}</li>`).join("")}
-                </ul>
+                <div class="dach-skill-list">
+                  ${skills.map(({ category, items }) => `
+                    <div class="dach-skill-entry">
+                      <strong>${category}:</strong> ${items}
+                    </div>
+                  `).join("")}
+                </div>
               </section>
             ` : ""}
           </aside>
@@ -1107,7 +1047,6 @@ function generateDACHResumeHTML(
 }
 
 const EU_ACCENT = "#1e293b";
-const EU_EXCLUDE_SKILLS = ["spokenLanguages", "hobbies"];
 
 function generateEuropeanResumeHTML(
   resumeData: ResumeData,
@@ -1121,13 +1060,6 @@ function generateEuropeanResumeHTML(
   };
 
   const currentRole = workExperience?.[0]?.title || "";
-  const mainSkills = skills
-    ? Object.entries(skills).filter(
-        ([cat]) => !EU_EXCLUDE_SKILLS.includes(cat) && skills[cat]?.length
-      )
-    : [];
-  const spokenLanguages = skills?.spokenLanguages || [];
-  const hobbies = skills?.hobbies || [];
 
   const headshotImg = headshotBase64
     ? `<img src="data:image/jpeg;base64,${headshotBase64}" alt="" class="eu-headshot-img" />`
@@ -1268,30 +1200,16 @@ function generateEuropeanResumeHTML(
 
         <div class="eu-grid">
           <aside class="eu-sidebar">
-            ${mainSkills.length > 0 ? `
+            ${skills && skills.length > 0 ? `
               <section>
                 <h2 class="eu-h2">Skills</h2>
-                <ul class="eu-skill-ul">
-                  ${mainSkills.flatMap(([, items]) => (items || []).map((item) => `<li>${item}</li>`)).join("")}
-                </ul>
-              </section>
-            ` : ""}
-
-            ${spokenLanguages.length > 0 ? `
-              <section>
-                <h2 class="eu-h2">Languages</h2>
-                <ul class="eu-skill-ul">
-                  ${spokenLanguages.map((l) => `<li>${l}</li>`).join("")}
-                </ul>
-              </section>
-            ` : ""}
-
-            ${hobbies.length > 0 ? `
-              <section>
-                <h2 class="eu-h2">Interests</h2>
-                <ul class="eu-skill-ul">
-                  ${hobbies.map((h) => `<li>${h}</li>`).join("")}
-                </ul>
+                <div class="eu-skill-list">
+                  ${skills.map(({ category, items }) => `
+                    <div class="eu-skill-entry">
+                      <strong>${category}:</strong> ${items}
+                    </div>
+                  `).join("")}
+                </div>
               </section>
             ` : ""}
           </aside>

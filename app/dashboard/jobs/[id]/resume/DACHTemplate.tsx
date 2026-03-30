@@ -54,21 +54,14 @@ export function DACHTemplate() {
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
+  const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
+  const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
   const [headshotError, setHeadshotError] = useState(false);
 
   // Current role from most recent work experience
   const currentRole = workExperience?.[0]?.title;
-
-  // Skills for Kenntnisse (exclude spokenLanguages and hobbies - shown in separate sections)
-  const dachExcludeCategories = ["spokenLanguages", "hobbies"];
-  const mainSkills = skills
-    ? Object.entries(skills).filter(
-        ([cat]) => !dachExcludeCategories.includes(cat) && skills[cat]?.length
-      )
-    : [];
-  const spokenLanguages = skills?.spokenLanguages || [];
-  const hobbies = skills?.hobbies || [];
 
   return (
     <div className="h-full pt-0">
@@ -387,78 +380,37 @@ export function DACHTemplate() {
           </section>
         </main>
 
-        {/* RIGHT COLUMN - Kenntnisse, Sprachen, Hobbys */}
+        {/* RIGHT COLUMN - Kenntnisse */}
         <aside className="space-y-4">
-          {/* Kenntnisse (Skills) - vertical list with circular bullets */}
-          {mainSkills.length > 0 && (
-            <section>
-              <h2
-                className="text-xs font-bold uppercase tracking-widest pb-1 mb-2 text-gray-900 border-b-2"
-                style={{ borderColor: PURPLE }}
-              >
-                Kenntnisse
-              </h2>
-              <ul className="space-y-1.5 text-xs text-gray-700">
-                {mainSkills.flatMap(([category, items]) =>
-                  (items || []).map((item, i) => (
-                    <li key={`${category}-${i}`} className="flex items-center gap-2">
-                      <span
-                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: PURPLE }}
-                      />
-                      {item}
-                    </li>
-                  ))
-                )}
-              </ul>
-            </section>
-          )}
-
-          {/* Sprachen (Languages) */}
-          {spokenLanguages.length > 0 && (
-            <section>
-              <h2
-                className="text-xs font-bold uppercase tracking-widest pb-1 mb-2 text-gray-900 border-b-2"
-                style={{ borderColor: PURPLE }}
-              >
-                Sprachen
-              </h2>
-              <ul className="space-y-1.5 text-xs text-gray-700">
-                {spokenLanguages.map((lang, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: PURPLE }}
+          <section>
+            <h2
+              className="text-xs font-bold uppercase tracking-widest pb-1 mb-2 text-gray-900 border-b-2"
+              style={{ borderColor: PURPLE }}
+            >
+              Kenntnisse
+            </h2>
+            <div className="space-y-2 text-xs">
+              {(skills || []).map((skill, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeSkillCategory(idx)}>
+                  <div>
+                    <EditableField
+                      value={skill.category}
+                      onChange={(value) => updateSkillCategory(idx, 'category', value)}
+                      placeholder="Category"
+                      className="font-semibold text-gray-900 text-xs"
                     />
-                    {lang}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* Hobbys & Interessen */}
-          {hobbies.length > 0 && (
-            <section>
-              <h2
-                className="text-xs font-bold uppercase tracking-widest pb-1 mb-2 text-gray-900 border-b-2"
-                style={{ borderColor: PURPLE }}
-              >
-                Hobbys & Interessen
-              </h2>
-              <ul className="space-y-1.5 text-xs text-gray-700">
-                {hobbies.map((hobby, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: PURPLE }}
+                    <EditableField
+                      value={skill.items}
+                      onChange={(value) => updateSkillCategory(idx, 'items', value)}
+                      placeholder="e.g. Python, TypeScript, Go"
+                      className="text-gray-700 text-xs"
                     />
-                    {hobby}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addSkillCategory('', '')} label="skill category" />
+            </div>
+          </section>
         </aside>
       </div>
     </div>

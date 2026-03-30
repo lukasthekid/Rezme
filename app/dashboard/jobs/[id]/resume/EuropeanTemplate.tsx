@@ -13,8 +13,6 @@ import { LinkIcon, Phone, Mail, MapPin } from "lucide-react";
 
 const ACCENT = "#1e293b";
 
-const excludeCategories = ["spokenLanguages", "hobbies"];
-
 /**
  * EuropeanTemplate — international European-style CV with headshot (top-right),
  * navy/slate accents, English section labels, sidebar skills and dates on the right.
@@ -51,18 +49,13 @@ export function EuropeanTemplate() {
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
+  const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
+  const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
   const [headshotError, setHeadshotError] = useState(false);
 
   const currentRole = workExperience?.[0]?.title;
-
-  const mainSkills = skills
-    ? Object.entries(skills).filter(
-        ([cat]) => !excludeCategories.includes(cat) && skills[cat]?.length
-      )
-    : [];
-  const spokenLanguages = skills?.spokenLanguages || [];
-  const hobbies = skills?.hobbies || [];
 
   return (
     <div className="h-full pt-0">
@@ -189,73 +182,35 @@ export function EuropeanTemplate() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,32%)_minmax(0,68%)] lg:gap-8">
         <aside className="space-y-4 lg:order-1">
-          {mainSkills.length > 0 && (
-            <section>
-              <h2
-                className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
-                style={{ borderColor: ACCENT }}
-              >
-                Skills
-              </h2>
-              <ul className="space-y-1.5 text-xs text-slate-700">
-                {mainSkills.flatMap(([category, items]) =>
-                  (items || []).map((item, i) => (
-                    <li key={`${category}-${i}`} className="flex items-start gap-2">
-                      <span
-                        className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: ACCENT }}
-                      />
-                      <span>{item}</span>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </section>
-          )}
-
-          {spokenLanguages.length > 0 && (
-            <section>
-              <h2
-                className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
-                style={{ borderColor: ACCENT }}
-              >
-                Languages
-              </h2>
-              <ul className="space-y-1.5 text-xs text-slate-700">
-                {spokenLanguages.map((lang, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span
-                      className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: ACCENT }}
+          <section>
+            <h2
+              className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
+              style={{ borderColor: ACCENT }}
+            >
+              Skills
+            </h2>
+            <div className="space-y-2 text-xs">
+              {(skills || []).map((skill, idx) => (
+                <EditableSectionItem key={idx} onRemove={() => removeSkillCategory(idx)}>
+                  <div>
+                    <EditableField
+                      value={skill.category}
+                      onChange={(value) => updateSkillCategory(idx, 'category', value)}
+                      placeholder="Category"
+                      className="font-semibold text-slate-900 text-xs"
                     />
-                    <span>{lang}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {hobbies.length > 0 && (
-            <section>
-              <h2
-                className="mb-2 border-b pb-1 text-xs font-bold uppercase tracking-wider text-slate-900"
-                style={{ borderColor: ACCENT }}
-              >
-                Interests
-              </h2>
-              <ul className="space-y-1.5 text-xs text-slate-700">
-                {hobbies.map((hobby, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span
-                      className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: ACCENT }}
+                    <EditableField
+                      value={skill.items}
+                      onChange={(value) => updateSkillCategory(idx, 'items', value)}
+                      placeholder="e.g. Python, TypeScript, Go"
+                      className="text-slate-700 text-xs"
                     />
-                    <span>{hobby}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+                  </div>
+                </EditableSectionItem>
+              ))}
+              <AddSectionButton onClick={() => addSkillCategory('', '')} label="skill category" />
+            </div>
+          </section>
         </aside>
 
         <main className="space-y-4 lg:order-2">

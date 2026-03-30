@@ -220,28 +220,19 @@ export function ResumeBuilderExample() {
       )}
 
       {/* ===== SKILLS ===== */}
-      {skills && Object.keys(skills).length > 0 && (
+      {skills && skills.length > 0 && (
         <section className="mb-5">
           <h2 className="text-lg font-bold uppercase border-b-2 border-black pb-1 mb-3">
             Skills
           </h2>
 
           <div className="space-y-2 text-sm">
-            {Object.entries(skills).map(([category, items]) => {
-              if (!items || items.length === 0) return null;
-
-              const formattedCategory = category
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, (str) => str.toUpperCase())
-                .trim();
-
-              return (
-                <div key={category}>
-                  <span className="font-semibold">{formattedCategory}:</span>{' '}
-                  <span>{items.join(', ')}</span>
-                </div>
-              );
-            })}
+            {skills.map(({ category, items }, idx) => (
+              <div key={idx}>
+                <span className="font-semibold">{category}:</span>{' '}
+                <span>{items}</span>
+              </div>
+            ))}
           </div>
         </section>
       )}

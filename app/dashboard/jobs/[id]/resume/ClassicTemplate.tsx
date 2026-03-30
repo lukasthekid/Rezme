@@ -53,6 +53,9 @@ export function ClassicTemplate() {
   const removeEducation = useResumeStore((state) => state.removeEducation);
   const addProject = useResumeStore((state) => state.addProject);
   const removeProject = useResumeStore((state) => state.removeProject);
+  const updateSkillCategory = useResumeStore((state) => state.updateSkillCategory);
+  const addSkillCategory = useResumeStore((state) => state.addSkillCategory);
+  const removeSkillCategory = useResumeStore((state) => state.removeSkillCategory);
 
   // Helper function to format URLs for display
   const formatUrl = (url: string): string => {
@@ -62,17 +65,6 @@ export function ClassicTemplate() {
       .replace(/^www\./, '')
       .replace(/\/$/, '');
   };
-
-  // Map skills to categories for Technical Skills section
-  // Languages -> programmingLanguages
-  // Frameworks & Libraries -> technologies (grouped together as they're often mixed)
-  // Developer Tools -> tools
-  const languages = skills?.programmingLanguages || [];
-  const tools = skills?.tools || [];
-  const technologies = skills?.technologies || [];
-  
-  // Group technologies as "Frameworks & Libraries" or show separately if needed
-  const frameworksAndLibraries = technologies;
 
   return (
     <div className="h-full pt-2">
@@ -379,53 +371,32 @@ export function ClassicTemplate() {
         </section>
 
         {/* TECHNICAL SKILLS */}
-        {(languages.length > 0 || frameworksAndLibraries.length > 0 || tools.length > 0) && (
-          <section>
-            <h2 className="text-xs font-bold uppercase tracking-wide border-b border-gray-800 pb-1 mb-3 text-gray-900">
-              Technical Skills
-            </h2>
-            <div className="space-y-2 text-xs">
-              {languages.length > 0 && (
+        <section>
+          <h2 className="text-xs font-bold uppercase tracking-wide border-b border-gray-800 pb-1 mb-3 text-gray-900">
+            Technical Skills
+          </h2>
+          <div className="space-y-2 text-xs">
+            {(skills || []).map((skill, idx) => (
+              <EditableSectionItem key={idx} onRemove={() => removeSkillCategory(idx)}>
                 <div>
-                  <span className="font-semibold text-gray-900">Languages:</span>{' '}
-                  <span className="text-gray-700">{languages.join(', ')}</span>
+                  <EditableField
+                    value={skill.category}
+                    onChange={(value) => updateSkillCategory(idx, 'category', value)}
+                    placeholder="Category"
+                    className="font-semibold text-gray-900 text-xs"
+                  />
+                  <EditableField
+                    value={skill.items}
+                    onChange={(value) => updateSkillCategory(idx, 'items', value)}
+                    placeholder="e.g. Python, TypeScript, Go"
+                    className="text-gray-700 text-xs"
+                  />
                 </div>
-              )}
-              {frameworksAndLibraries.length > 0 && (
-                <div>
-                  <span className="font-semibold text-gray-900">Frameworks:</span>{' '}
-                  <span className="text-gray-700">{frameworksAndLibraries.join(', ')}</span>
-                </div>
-              )}
-              {tools.length > 0 && (
-                <div>
-                  <span className="font-semibold text-gray-900">Developer Tools:</span>{' '}
-                  <span className="text-gray-700">{tools.join(', ')}</span>
-                </div>
-              )}
-              {/* Show other skill categories */}
-              {skills && Object.entries(skills).map(([category, items]) => {
-                if (!items || items.length === 0) return null;
-                // Skip already displayed categories
-                if (['programmingLanguages', 'technologies', 'tools'].includes(category)) {
-                  return null;
-                }
-                
-                const formattedCategory = category
-                  .replace(/([A-Z])/g, ' $1')
-                  .replace(/^./, (str) => str.toUpperCase())
-                  .trim();
-                
-                return (
-                  <div key={category}>
-                    <span className="font-semibold text-gray-900">{formattedCategory}:</span>{' '}
-                    <span className="text-gray-700">{items.join(', ')}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
+              </EditableSectionItem>
+            ))}
+            <AddSectionButton onClick={() => addSkillCategory('', '')} label="skill category" />
+          </div>
+        </section>
       </div>
     </div>
   );

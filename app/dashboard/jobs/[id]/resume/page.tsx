@@ -90,30 +90,11 @@ const MOCK_RESUME_DATA: ResumeData = {
       ],
     },
   ],
-  skills: {
-    programmingLanguages: ["Python", "SQL", "Rust", "Go", "C++"],
-    technologies: [
-      "PyTorch",
-      "TensorFlow",
-      "JAX",
-      "Hugging Face",
-      "LangChain",
-      "Kubernetes",
-      "Docker",
-      "AWS (SageMaker/Lambda)",
-      "Terraform",
-      "Ray",
-      "Apache Spark",
-      "Snowflake",
-      "Pinecone (Vector DBs)",
-      "dbt",
-      "NVIDIA Triton",
-      "Pandas",
-      "NumPy",
-      "Scikit-learn",
-    ],
-    tools: ["Git", "VS Code", "Jupyter", "Linux"],
-  },
+  skills: [
+    { category: "Programming Languages", items: "Python, SQL, Rust, Go, C++" },
+    { category: "Technologies", items: "PyTorch, TensorFlow, JAX, Hugging Face, LangChain, Kubernetes, Docker, AWS (SageMaker/Lambda), Terraform, Ray, Apache Spark, Snowflake, Pinecone (Vector DBs), dbt, NVIDIA Triton, Pandas, NumPy, Scikit-learn" },
+    { category: "Developer Tools", items: "Git, VS Code, Jupyter, Linux" },
+  ],
 };
 
 export default function ResumeViewerPage() {
