@@ -16,12 +16,45 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+const SITE_URL = "https://rezme.ai";
+const TITLE = "Rezme – AI Resume Tailoring for Every Job";
+const DESCRIPTION =
+  "Stop sending generic applications. Rezme uses AI to tailor your resume and cover letter to each job description in seconds. More interviews, less effort.";
+
 export const metadata: Metadata = {
-  title: "Rezme – AI Resume Tailoring for Every Job",
-  description:
-    "Stop sending generic applications. Rezme uses AI to tailor your resume and cover letter to each job description in seconds. More interviews, less effort.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: TITLE,
+    template: "%s | Rezme",
+  },
+  description: DESCRIPTION,
   icons: {
     icon: "/Rezme.svg",
+  },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    siteName: "Rezme",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
   },
 };
 

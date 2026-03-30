@@ -6,9 +6,11 @@ import {
 } from "@/components/landing/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Impressum | Rezme",
+  title: "Impressum",
   description:
     "Legal disclosure (Impressum) for Rezme in accordance with DDG §5.",
+  alternates: { canonical: "https://rezme.ai/impressum" },
+  robots: { index: false },
 };
 
 const CONTACT_EMAIL = "resumr.office@gmail.com";

@@ -6,9 +6,10 @@ import {
 } from "@/components/landing/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Rezme",
+  title: "Privacy Policy",
   description:
     "Learn how Rezme collects, uses, stores, and shares your information when you use our resume tailoring, cover letter, and job application tools.",
+  alternates: { canonical: "https://rezme.ai/privacy" },
 };
 
 const CONTACT_EMAIL = "resumr.office@gmail.com";

@@ -6,9 +6,10 @@ import {
 } from "@/components/landing/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Rezme",
+  title: "Terms of Service",
   description:
     "Read the terms that govern your use of Rezme, including subscriptions, acceptable use, user content, and AI-generated output.",
+  alternates: { canonical: "https://rezme.ai/terms" },
 };
 
 const CONTACT_EMAIL = "resumr.office@gmail.com";
