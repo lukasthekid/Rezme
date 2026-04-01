@@ -1,15 +1,10 @@
 import puppeteer from "puppeteer";
 import { existsSync } from "fs";
 
-/**
- * Llama 4 Scout on Groq free-tier: 30,000 TPM.
- * Budget:
- *   ~600 tokens  — system prompt (~1,800 chars)
- *   ~20,000 tokens — HTML content (~60,000 chars)
- *   ~80 tokens   — user prompt template
- *   ⇒ ~20,700 input → ~9,300 tokens available for output
- */
-const MAX_HTML_LENGTH = 60_000;
+import { MAX_HTML_LENGTH_FOR_EXTRACTION } from "./htmlForExtraction";
+
+/** Same cap as `prepareHtmlForExtraction` — keeps fetch + extraction payloads aligned. */
+const MAX_HTML_LENGTH = MAX_HTML_LENGTH_FOR_EXTRACTION;
 const NATIVE_FETCH_TIMEOUT_MS = 12_000;
 const PUPPETEER_TIMEOUT_MS = 30_000;
 
@@ -60,8 +55,7 @@ export class HtmlFetchError extends Error {
  *     headless Puppeteer which passes TLS fingerprinting and JS challenges.
  *
  * The returned content is aggressively compressed for LLM consumption:
- * JSON-LD → meta tags → stripped body text, capped to fit within Groq
- * free-tier token limits.
+ * JSON-LD → meta tags → stripped body text, capped for extraction cost control.
  */
 export async function fetchHtml(url: string): Promise<string> {
   // --- Tier 1: native fetch ---
@@ -257,8 +251,7 @@ function sleep(ms: number): Promise<void> {
  *  2. Key meta tags (title, description, og:*)
  *  3. Stripped body text (no HTML tags, just readable content)
  *
- * Resulting payload is capped at MAX_HTML_LENGTH to fit within Groq
- * free-tier token limits.
+ * Resulting payload is capped at MAX_HTML_LENGTH for extraction cost control.
  */
 function compressForLlm(html: string): string {
   const parts: string[] = [];

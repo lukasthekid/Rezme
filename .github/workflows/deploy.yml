@@ -73,8 +73,8 @@ jobs:
           LINKEDIN_CLIENT_ID=${{ secrets.LINKEDIN_CLIENT_ID }}
           LINKEDIN_CLIENT_SECRET=${{ secrets.LINKEDIN_CLIENT_SECRET }}
 
-          # Groq
-          GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          # Google Gemini (job listing extraction)
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
           # Stripe (Checkout, Customer Portal, webhooks)
           STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}

@@ -179,7 +179,7 @@ export default function PrivacyPage() {
         <ul>
           <li>Authentication providers such as Google, GitHub, and LinkedIn for social sign-in.</li>
           <li>Stripe for subscription billing, payment processing, promotion codes, and customer portal access.</li>
-          <li>Groq for AI-assisted parsing of submitted job listing content.</li>
+          <li>Google Gemini (Google AI) for AI-assisted parsing of submitted job listing content.</li>
           <li>n8n-based workflow infrastructure for resume generation, cover letter generation, and document processing.</li>
         </ul>
         <p>
@@ -205,7 +205,7 @@ export default function PrivacyPage() {
             United States and other countries.
           </li>
           <li>
-            <strong>Groq</strong> (AI processing) may process data in the United States.
+            <strong>Google AI (Gemini)</strong> may process data in the United States.
           </li>
         </ul>
         <p>
